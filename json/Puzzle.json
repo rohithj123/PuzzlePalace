@@ -1,0 +1,21 @@
+[
+    {
+      "puzzleId": 1001,
+      "description": "Placeholder puzzle description 1",
+      "status": "unsolved",
+      "hints": {
+        "hintsUsed": 0,
+        "maxHints": 3
+      }
+    },
+    {
+      "puzzleId": 1002,
+      "description": "Placeholder puzzle description 2",
+      "status": "unsolved",
+      "hints": {
+        "hintsUsed": 0,
+        "maxHints": 3
+      }
+    }
+  ]
+  

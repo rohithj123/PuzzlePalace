@@ -1,0 +1,15 @@
+[
+    {
+      "certificateId": "CERT_UUID_1",
+      "playerName": "PlayerOne",
+      "completionDate": "YYYY-MM-DD",
+      "scoreSummary": "Placeholder summary for PlayerOne"
+    },
+    {
+      "certificateId": "CERT_UUID_2",
+      "playerName": "PlayerTwo",
+      "completionDate": "YYYY-MM-DD",
+      "scoreSummary": "Placeholder summary for PlayerTwo"
+    }
+  ]
+  

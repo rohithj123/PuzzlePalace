@@ -1,0 +1,24 @@
+[
+    {
+      "playerID": "PLAYER_UUID_1",
+      "username": "PlayerOne",
+      "email": "placeholder1@example.com",
+      "passwordHash": "PLACEHOLDER_HASH",
+      "isGuest": false,
+      "inventory": ["ItemPlaceholder1", "ItemPlaceholder2"],
+      "score": 0,
+      "certificate": null
+    },
+    {
+      "playerID": "PLAYER_UUID_2",
+      "username": "PlayerTwo",
+      "email": "placeholder2@example.com",
+      "passwordHash": "PLACEHOLDER_HASH",
+      "isGuest": true,
+      "inventory": [],
+      "score": 0,
+      "certificate": null
+    }
+  ]
+  
+  

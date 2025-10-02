@@ -1,4 +1,4 @@
-package com.puzzlepalace;
+package com.example;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

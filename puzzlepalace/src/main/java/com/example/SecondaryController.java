@@ -1,4 +1,4 @@
-package com.puzzlepalace;
+package com.example;
 
 import java.io.IOException;
 import javafx.fxml.FXML;

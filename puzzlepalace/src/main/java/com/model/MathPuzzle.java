@@ -1,62 +1,31 @@
 package com.model;
 
 public class MathPuzzle {
+
+    // Fields
     private int puzzleId;
     private String question;
-    private String correctAnswer;
-    private boolean isSolved;
+    private String answer;
 
+    // Constructors
     public MathPuzzle() {
-        // default constructor
+        // default constructor (stub)
     }
 
-    public MathPuzzle(int puzzleId, String question, String correctAnswer) {
-        this.puzzleId = puzzleId;
-        this.question = question;
-        this.correctAnswer = correctAnswer;
-        this.isSolved = false;
+    public MathPuzzle(int puzzleId, String question, String answer) {
+        // parameterized constructor (stub)
     }
 
-    public int getPuzzleId() {
-        return puzzleId;
+    // Methods
+    public void checkAnswer() {
+        // stub method - no implementation
     }
 
-    public String getQuestion() {
-        return question;
-    }
-
-    public boolean isSolved() {
-        return isSolved;
-    }
-
-    /**
-     * Basic answer checker (case-insensitive). Prints stub logs.
-     */
-    public boolean checkAnswer(String attempt) {
-        System.out.println("MathPuzzle.checkAnswer() called with attempt: " + attempt + " (stub)");
-        if (attempt == null) return false;
-
-        boolean correct = attempt.trim().equalsIgnoreCase(correctAnswer);
-        if (correct) {
-            System.out.println("Correct! MathPuzzle solved (stub).");
-            isSolved = true;
-        } else {
-            System.out.println("Incorrect answer (stub).");
-        }
-        return correct;
-    }
-
-    public void revealHint() {
-        System.out.println("MathPuzzle.revealHint() called (stub)");
+    public void getHint() {
+        // stub method - no implementation
     }
 
     public void resetPuzzle() {
-        System.out.println("MathPuzzle.resetPuzzle() called (stub)");
-        isSolved = false;
-    }
-
-    @Override
-    public String toString() {
-        return "MathPuzzle{id=" + puzzleId + ", question='" + question + "', solved=" + isSolved + "}";
+        // stub method - no implementation
     }
 }

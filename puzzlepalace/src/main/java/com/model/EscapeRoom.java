@@ -15,61 +15,41 @@ public class EscapeRoom
     {
     }
 
-    public EscapeRoom(UUID roomID, String name, String description,
-            List<Puzzle> puzzles, List<String> exits) 
+    public EscapeRoom(UUID roomID, String name, String description, List<Puzzle> puzzles, List<String> exits) 
     {
-        this.roomID = roomID;
-        this.name = name;
-        this.description = description;
-        this.puzzles = puzzles;
-        this.exits = exits;
     }
 
     public UUID getRoomID() 
     {
-        return roomID;
+        return null;
     }
 
     public String getName() 
     {
-        return name;
+        return null;
     }
 
     public String getDescription() 
     {
-        return description;
+        return null;
     }
 
     public List<Puzzle> getPuzzles() 
     {
-        return puzzles;
+        return null;
     }
 
     public List<String> getExits() 
     {
-        return exits;
+        return null;
     }
 
     public void loadRoom(UUID id) 
     {
-        System.out.println("loadRoom() called with id: " + id + " (stub)");
     }
 
     public boolean isCompleted() 
     {
-        System.out.println("isCompleted() called (stub)");
         return false;
-    }
-
-    @Override
-    public String toString() 
-    {
-        return "EscapeRoom{" +
-                "roomID=" + roomID +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", puzzles=" + (puzzles != null ? puzzles.size() : 0) +
-                ", exits=" + exits +
-                '}';
     }
 }

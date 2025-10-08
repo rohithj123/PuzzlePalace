@@ -16,6 +16,11 @@ public abstract class Puzzle {
         this.hints = new Hint();
     }
 
+    public boolean trySolve(String attempt) {
+        this.status = "ATTEMPTED";
+        return false;
+    }
+
     public boolean solve() {
         this.status = "SOLVED";
         return true;

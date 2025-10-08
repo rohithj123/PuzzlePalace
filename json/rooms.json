@@ -1,15 +1,74 @@
 [
-    {
-      "certificateId": "CERT_UUID_1",
-      "playerName": "PlayerOne",
-      "completionDate": "YYYY-MM-DD",
-      "scoreSummary": "Placeholder summary for PlayerOne"
-    },
-    {
-      "certificateId": "CERT_UUID_2",
-      "playerName": "PlayerTwo",
-      "completionDate": "YYYY-MM-DD",
-      "scoreSummary": "Placeholder summary for PlayerTwo"
-    }
-  ]
+  {
+    "roomID": "ROOM_UUID_1",
+    "name": "Haunted Library",
+    "description": "A dark library filled with ghostly puzzles. Search shelves and solve riddles.",
+    "difficulty": "medium",
+    "estimatedTimeMinutes": 30,
+    "puzzles": [
+      {
+        "puzzleId": 1001,
+        "type": "WordPuzzle",
+        "description": "Find the missing word in the riddle on the third shelf.",
+        "status": "unsolved",
+        "hints": {
+          "hintsUsed": 0,
+          "maxHints": 3,
+          "availableHints": [
+            "Check the book titles on the third shelf",
+            "The missing word is a common library object"
+          ]
+        },
+        "wordList": ["lamp", "book", "key", "scroll"]
+      },
+      {
+        "puzzleId": 1002,
+        "type": "MathPuzzle",
+        "description": "Balance the alchemical equation to open the locked cabinet.",
+        "status": "unsolved",
+        "hints": {
+          "hintsUsed": 0,
+          "maxHints": 3,
+          "availableHints": [
+            "Look at the coefficients on the left side",
+            "Try simple integer coefficients first"
+          ]
+        },
+        "equation": "2*x + 3 = 11",
+        "answerHint": "x is an integer"          
+      }
+    ],
+    "exits": ["north_hall", "secret_stairs"]
+  },
+  {
+    "roomID": "ROOM_UUID_2",
+    "name": "Secret Laboratory",
+    "description": "Solve logical circuits and equations to deactivate the lab alarm.",
+    "difficulty": "hard",
+    "estimatedTimeMinutes": 40,
+    "puzzles": [
+      {
+        "puzzleId": 1003,
+        "type": "LogicPuzzle",
+        "description": "Re-route the circuits to turn off the alarm.",
+        "status": "unsolved",
+        "hints": {
+          "hintsUsed": 0,
+          "maxHints": 3,
+          "availableHints": [
+            "Start by connecting red to red",
+            "Follow the wire path from power to alarm"
+          ]
+        },
+        "logicType": "circuit",
+        "logicMetadata": {
+          "nodes": 6,
+          "requiredConnections": ["A-B", "C-D"]
+        }
+      }
+    ],
+    "exits": ["lab_foyer"]
+  }
+]
+
   

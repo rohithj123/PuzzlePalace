@@ -1,3 +1,5 @@
+
+
 package com.model;
 
 import org.json.simple.JSONArray;
@@ -10,17 +12,10 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class DataLoader {
 
-    private final String filePath;
-
-    public DataLoader(String filePath) {
-        this.filePath = filePath;
-    }
-
-   
-    public List<Player> loadUsers() {
+    // Static method so you can call DataLoader.loadUsers("file.json")
+    public static List<Player> loadUsers(String filePath) {
         List<Player> players = new ArrayList<>();
         File f = new File(filePath);
         if (!f.exists()) {
@@ -35,30 +30,26 @@ public class DataLoader {
                 System.out.println("DataLoader: JSON root is not an array -> returning empty list");
                 return players;
             }
+
             JSONArray arr = (JSONArray) parsed;
             for (Object o : arr) {
                 if (!(o instanceof JSONObject)) continue;
                 JSONObject jo = (JSONObject) o;
 
-                String username = null;
-                String email = null;
+                String username = jo.get("username") != null ? jo.get("username").toString() : "guest";
+                String email = jo.get("email") != null ? jo.get("email").toString() : null;
 
-                Object u = jo.get("username");
-                if (u != null) username = u.toString();
-
-                Object e = jo.get("email");
-                if (e != null) email = e.toString();
-
-                // Use existing Player constructor (username, email). Fallback to "guest" if username missing.
-                Player p = new Player(username == null ? "guest" : username, email);
+                Player p = new Player(username, email);
                 players.add(p);
             }
+
             System.out.println("DataLoader: loaded " + players.size() + " players from " + filePath);
         } catch (ParseException pe) {
             System.out.println("DataLoader: parse error: " + pe.getMessage());
         } catch (Exception e) {
             System.out.println("DataLoader: IO error: " + e.getMessage());
         }
+
         return players;
     }
 }

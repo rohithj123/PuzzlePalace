@@ -13,7 +13,6 @@ import org.json.simple.JSONObject;
 public class DataWriter {
 
     private DataWriter() {
-        // Prevent instantiation
     }
 
     public static void saveUsers(List<Player> players, String filePath) {

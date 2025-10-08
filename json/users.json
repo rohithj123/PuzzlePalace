@@ -1,21 +1,59 @@
 [
-    {
-      "puzzleId": 1001,
-      "description": "Placeholder puzzle description 1",
-      "status": "unsolved",
-      "hints": {
-        "hintsUsed": 0,
-        "maxHints": 3
-      }
+  {
+    "playerID": "PLAYER_UUID_1",
+    "username": "PlayerOne",
+    "email": "placeholder1@example.com",
+    "passwordHash": "PLACEHOLDER_HASH",
+    "isGuest": false,
+    "inventory": ["Key", "Map"],
+    "score": {
+      "points": 0,
+      "puzzlesSolved": 0,
+      "hintsUsed": 0,
+      "timeTaken": 0,
+      "progress": "PlaceholderProgress"
     },
-    {
-      "puzzleId": 1002,
-      "description": "Placeholder puzzle description 2",
-      "status": "unsolved",
-      "hints": {
-        "hintsUsed": 0,
-        "maxHints": 3
-      }
+    "certificate": {
+      "certificateId": "CERT_UUID_1",
+      "playerName": "PlayerOne",
+      "completionDate": "YYYY-MM-DD",
+      "scoreSummary": "Placeholder summary"
+    },
+    "progress": {
+      "currentRoom": 1,
+      "isCompleted": false,
+      "hintsUsed": 0,
+      "hintsRemaining": 3,
+      "availableHints": ["HintPlaceholder1", "HintPlaceholder2"],
+      "startTime": "YYYY-MM-DDTHH:MM:SSZ",
+      "endTime": null
     }
-  ]
+  },
+  {
+    "playerID": "PLAYER_UUID_2",
+    "username": "PlayerTwo",
+    "email": "placeholder2@example.com",
+    "passwordHash": "PLACEHOLDER_HASH",
+    "isGuest": true,
+    "inventory": [],
+    "score": {
+      "points": 0,
+      "puzzlesSolved": 0,
+      "hintsUsed": 0,
+      "timeTaken": 0,
+      "progress": "PlaceholderProgress"
+    },
+    "certificate": null,
+    "progress": {
+      "currentRoom": 2,
+      "isCompleted": false,
+      "hintsUsed": 0,
+      "hintsRemaining": 3,
+      "availableHints": ["HintPlaceholder3", "HintPlaceholder4"],
+      "startTime": "YYYY-MM-DDTHH:MM:SSZ",
+      "endTime": null
+    }
+  }
+]
+
   

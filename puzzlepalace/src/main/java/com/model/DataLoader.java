@@ -2,15 +2,15 @@
 
 package com.model;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class DataLoader {
 
@@ -39,7 +39,7 @@ public class DataLoader {
                 String username = jo.get("username") != null ? jo.get("username").toString() : "guest";
                 String email = jo.get("email") != null ? jo.get("email").toString() : null;
 
-                Player p = new Player(username, email);
+                Player p = new Player(username, email, email);
                 players.add(p);
             }
 

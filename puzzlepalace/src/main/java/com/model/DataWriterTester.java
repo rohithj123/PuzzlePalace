@@ -1,0 +1,21 @@
+package com.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DataWriterTester 
+{
+    public static void main(String[] args) 
+    {
+        String filePath = "data/users.json"; 
+
+        List<Player> players = new ArrayList<>();
+        players.add(new Player("alice", "alice@example.com", "password1"));
+        players.add(new Player("bob", "bob@example.com", "password2"));
+        players.add(new Player("guest", "guest@example.com", "password3"));
+
+        DataWriter.saveUsers(players, filePath);
+
+        System.out.println("Wrote " + players.size() + " players to " + filePath);
+    }
+}

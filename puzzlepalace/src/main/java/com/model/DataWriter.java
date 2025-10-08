@@ -12,15 +12,11 @@ import org.json.simple.JSONObject;
 
 public class DataWriter {
 
-    private final String filePath;
-
-    public DataWriter(String filePath) 
-    {
-        this.filePath = filePath;
+    private DataWriter() {
+        // Prevent instantiation
     }
 
-    public void saveUsers(List<Player> players) 
-    {
+    public static void saveUsers(List<Player> players, String filePath) {
         JSONArray playerArray = new JSONArray();
 
         for (Player p : players) {
@@ -35,13 +31,11 @@ public class DataWriter {
 
         File file = new File(filePath);
         File parent = file.getParentFile();
-        if (parent != null && !parent.exists())
-        {
+        if (parent != null && !parent.exists()) {
             parent.mkdirs();
         }
 
-        try (FileWriter writer = new FileWriter(file)) 
-        {
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(playerArray.toJSONString());
             writer.flush();
             System.out.println("DataWriter: wrote " + players.size() + " players to " + filePath);
@@ -50,38 +44,30 @@ public class DataWriter {
         }
     }
 
-    private String safeGetString(Object obj, String methodName, String fieldName) 
-    {
+    private static String safeGetString(Object obj, String methodName, String fieldName) {
         if (obj == null) return "";
 
-        try 
-        {
+        try {
             Method m = obj.getClass().getMethod(methodName);
             Object val = m.invoke(obj);
             return val == null ? "" : val.toString();
-        } catch (NoSuchMethodException ignored) 
-        {
-        } catch (Exception e)
-        {
+        } catch (NoSuchMethodException ignored) {
+        } catch (Exception e) {
         }
 
-        try 
-        {
+        try {
             Field f = obj.getClass().getDeclaredField(fieldName);
             f.setAccessible(true);
             Object val = f.get(obj);
             return val == null ? "" : val.toString();
-        } catch (NoSuchFieldException nsf) 
-        {
-            try 
-            {
+        } catch (NoSuchFieldException nsf) {
+            try {
                 Field alt = obj.getClass().getDeclaredField("_" + fieldName);
                 alt.setAccessible(true);
                 Object val = alt.get(obj);
                 return val == null ? "" : val.toString();
             } catch (Exception ignored) {}
-        } catch (Exception e) 
-        {
+        } catch (Exception e) {
         }
 
         return "";

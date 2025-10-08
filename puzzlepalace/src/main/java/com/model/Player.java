@@ -22,7 +22,6 @@ public class Player {
         this.inventory = new ArrayList<>();
         this.isGuest = true;
         this.score = 0;
-
     }
 
     public Player(String username, String email, String rawPassword) {

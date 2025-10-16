@@ -39,7 +39,13 @@ public class DataLoader {
                 String username = jo.get("username") != null ? jo.get("username").toString() : "guest";
                 String email = jo.get("email") != null ? jo.get("email").toString() : null;
 
-                Player p = new Player(username, email, email);
+                String rawPassword = jo.get("password") != null ? jo.get("password").toString() : null;
+                String passwordHash = jo.get("passwordHash") != null ? jo.get("passwordHash").toString() : null;
+
+                Player p = new Player(username, email, rawPassword);
+                if (passwordHash != null && !passwordHash.isEmpty()) {
+                    p.setStoredPasswordHash(passwordHash);
+                }
                 players.add(p);
             }
 

@@ -31,4 +31,23 @@ public class PlayerManager {
         System.out.println("getAllPlayers() called (stub)");
         return new ArrayList<>(players);
     }
+
+    public Player getPlayerByUsername(String username) {
+        System.out.println("getPlayerByUsername() called (stub)");
+        if (username == null) {
+            return null;
+        }
+
+        for (Player player : players) {
+            if (player != null && player.getUsername() != null && username.equalsIgnoreCase(player.getUsername())) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
 }
+        
+
+

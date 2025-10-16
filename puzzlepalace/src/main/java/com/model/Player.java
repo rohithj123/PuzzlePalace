@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Objects;
-import java.lang.reflect.Method;
 
 
 public class Player {
@@ -46,6 +45,10 @@ public class Player {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public boolean addItem(Item item) {
@@ -128,24 +131,33 @@ public class Player {
             return false;
         }
 
-        if (this.username != null && this.username.equals(username)) {
-            return false;
-        }
+       
 
-        if(this.passwordHash == null) {
+        if(this.username == null) {
             this.username = username;
             this.setPassword(password);
             this.isGuest = false;
             return true;
         }
 
-        String candidateHash = Integer.toHexString(Objects.hash(password, this.username, this.email));
-        boolean ok = candidateHash.equals(this.passwordHash);
-        if(ok) {
+        if (!this.username.equals(username)) {
+            return false;
+        }
+        boolean ok = verifyPassword(password);
+        if (ok) {
             this.isGuest = false;
         }
         return ok;
+    }
+
+    public boolean verifyPassword(String raw) {
         
+        if (this.passwordHash == null) {
+            return raw == null;
+        }
+
+        String candidateHash = Integer.toHexString(Objects.hash(raw, this.username, this.email));
+        return candidateHash.equals(this.passwordHash);
     }
 
     public void logout() {
@@ -158,6 +170,10 @@ public class Player {
 
     public void setCertificate(Certificate c) {
         this.certificate = c;
+    }
+
+    public void setStoredPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     @Override

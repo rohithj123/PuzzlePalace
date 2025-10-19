@@ -18,7 +18,7 @@ public class Progress {
     private Player player;
     private long timer;
     private boolean isCompleted;
-    private Score score;
+    private final Score score;
     private int hintsUsed;
     private int hintsRemaining;
     private List<String> availableHints;
@@ -30,29 +30,55 @@ public class Progress {
     private static final String HINT_DELIMITER = " ||";
 
     public Progress() {
+        this(null, null, null);
+    }
+
+    public Progress(Player player, List<String> availableHints) {
+        this(player, null, availableHints);
+    }
+
+    public Progress(Player player, Score existingScore, List<String> availableHints) {
         this.currentRoom = 0;
-        this.player = null;
+        this.player = player;
         this.timer = 0L;
         this.isCompleted = false;
-        this.score = new Score();
+        this.score = existingScore != null ? existingScore : new Score();
         this.score.setProgress(this);
         this.hintsUsed = 0;
         this.availableHints = new ArrayList<>();
         this.hintsRemaining = 0;
         this.startTime = null;
         this.endTime = null;
-    }
-
-    public Progress(Player player, List<String> availableHints) {
-        this();
-        this.player = player;
-        if (availableHints != null) {
-            this.availableHints = new ArrayList<>(availableHints);
-        } else {
-            this.availableHints = new ArrayList<>();
-        }
+        setAvailableHintsInternal(availableHints);
         resetHints();
     }
+
+    public Score getScore() {
+        return score;
+    }
+
+    public void setAvailableHints(List<String> hints) {
+        replaceAvailableHints(hints);
+    }
+    public void replaceAvailableHints(List<String> hints) {
+        setAvailableHintsInternal(hints);
+        resetHints();
+    }
+
+    public void updateHintPool(List<String> hints) {
+        setAvailableHintsInternal(hints);
+        hintsRemaining = Math.max(availableHints.size() - hintsUsed, 0);    
+    }
+
+    public void beginGame(List<String> hints) {
+        if (hints != null) {
+            replaceAvailableHints(hints);
+        } else {
+            resetHints();
+        }
+        startGame();
+    }
+
 
     public void startGame() {
         this.startTime = LocalDateTime.now();
@@ -255,6 +281,22 @@ public class Progress {
             this.hintsRemaining = availableHints.size();
         }
         score.setHintsUsed(0);
+    }
+
+    private void setAvailableHintsInternal(List<String> hints) {
+        if (this.availableHints == null) {
+            this.availableHints = new ArrayList<>();
+        } else {
+            this.availableHints.clear();
+        }
+        if (hints == null) {
+            return;
+        }
+        for (String hint : hints) {
+            if (hint != null) {
+                this.availableHints.add(hint);
+            }
+        }
     }
 
     private static int parseInt(String value, int defaultValue) {

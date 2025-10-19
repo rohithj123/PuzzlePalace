@@ -1,56 +1,65 @@
 [
   {
-    "playerID": "PLAYER_UUID_1",
+    "playerID": "3e1365fa-6fb7-4b5e-9f1c-0c1af11df9c2",
     "username": "PlayerOne",
-    "email": "placeholder1@example.com",
-    "passwordHash": "PLACEHOLDER_HASH",
+    "email": "playerone@example.com",
+    "passwordPlain": "SecretPass1!",
+    "passwordHash": "5979250d",
     "isGuest": false,
-    "inventory": ["Key", "Map"],
+    "inventory": ["Brass Key", "Dusty Map", "Notebook"],
     "score": {
-      "points": 0,
-      "puzzlesSolved": 0,
-      "hintsUsed": 0,
-      "timeTaken": 0,
-      "progress": "PlaceholderProgress"
+      "points": 450,
+      "puzzlesSolved": 3,
+      "hintsUsed": 1,
+      "timeTaken": 720
     },
     "certificate": {
-      "certificateId": "CERT_UUID_1",
+      "certificateId": "c5c95a94-6f41-4af1-9120-21db1c8f1a63",
       "playerName": "PlayerOne",
-      "completionDate": "YYYY-MM-DD",
-      "scoreSummary": "Placeholder summary"
+      "completionDate": "2024-05-18",
+      "scoreSummary": "Completed the Haunted Library with three puzzles solved and minimal hints."
     },
     "progress": {
-      "currentRoom": 1,
+      "currentRoom": 2,
       "isCompleted": false,
-      "hintsUsed": 0,
-      "hintsRemaining": 3,
-      "availableHints": ["HintPlaceholder1", "HintPlaceholder2"],
-      "startTime": "YYYY-MM-DDTHH:MM:SSZ",
+      "hintsUsed": 1,
+      "hintsRemaining": 2,
+      "availableHints": [
+        "Search for a matching book spine symbols.",
+        "Remember the librarian's favorite author.",
+        "Look closely at the cracked floor tile."
+      ],
+      "startTime": "2024-05-18T13:05:00",
       "endTime": null
     }
   },
   {
-    "playerID": "PLAYER_UUID_2",
+    "playerID": "8d5a30f8-89ce-4b56-982a-24e6dbf6d2d1",
     "username": "PlayerTwo",
-    "email": "placeholder2@example.com",
-    "passwordHash": "PLACEHOLDER_HASH",
+    "email": "playertwo@example.com",
+    "passwordPlain": "PuzzleMaster2@", 
+    "passwordHash": "bbae836a",
     "isGuest": true,
     "inventory": [],
     "score": {
       "points": 0,
       "puzzlesSolved": 0,
       "hintsUsed": 0,
-      "timeTaken": 0,
-      "progress": "PlaceholderProgress"
+      "timeTaken": 0
+      
     },
     "certificate": null,
     "progress": {
-      "currentRoom": 2,
+      "currentRoom": 1,
       "isCompleted": false,
       "hintsUsed": 0,
       "hintsRemaining": 3,
-      "availableHints": ["HintPlaceholder3", "HintPlaceholder4"],
-      "startTime": "YYYY-MM-DDTHH:MM:SSZ",
+      "availableHints": [
+        "Inspect the experiment log for a sequence.",
+        "Align the coloured wires with their matching glyphs.",
+        "Check the control panel for a hidden latch."
+      ],
+      "startTime": "2024-05-19T09:45:00",
       "endTime": null
     }
   }

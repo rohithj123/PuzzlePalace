@@ -188,4 +188,31 @@ public class MathPuzzle
 
     public List<String> getHints() { return hints; }
     public void setHints(List<String> hints) { this.hints = hints; }
+
+
+public String evaluateSolution(String userAnswer) 
+{
+    MathPuzzleEvaluateSolution evaluator = new MathPuzzleEvaluateSolution();
+
+    if (!userAnswer.contains("=") && !userAnswer.contains(",")) 
+    {
+        return evaluator.evaluateSolution(this.question, userAnswer);
+    }
+
+    Map<String, Double> vars = new HashMap<>();
+    String[] assignments = userAnswer.split(",");
+    for (String part : assignments) 
+    {
+        String[] kv = part.split("=");
+        if (kv.length == 2) 
+        {
+            try {
+                vars.put(kv[0].trim(), Double.parseDouble(kv[1].trim()));
+            } catch (NumberFormatException ignored) {}
+        }
+    }
+    return evaluator.evaluateSolution(this.question, vars);
 }
+
+}
+

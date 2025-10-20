@@ -1,14 +1,16 @@
 package com.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MathPuzzle 
 {
 
     private int puzzleId;
-    private String question;
-    private String answer;
+    private String question;     
+    private String answer;       
     private List<String> hints;
     private int hintsUsed;
 
@@ -28,17 +30,19 @@ public class MathPuzzle
 
     public boolean checkAnswer() 
     {
-        if (question == null || answer == null) return false;
+        if (answer == null || question == null) return false;
+        Map<String, Double> vars = parseAnswerString(answer);
+        return checkAnswer(vars);
+    }
 
-        try 
-        {
-            double x = Double.parseDouble(answer);
-            // split equation
-            String[] parts = question.split("=");
-            if (parts.length != 2) return false;
+    public boolean checkAnswer(Map<String, Double> variables) 
+    {
+        try {
+            String[] sides = question.split("=");
+            if (sides.length != 2) return false;
 
-            double left = evaluate(parts[0], x);
-            double right = evaluate(parts[1], x);
+            double left = evaluate(sides[0], variables);
+            double right = evaluate(sides[1], variables);
 
             return Math.abs(left - right) < 1e-6;
         } catch (Exception e) 
@@ -53,74 +57,93 @@ public class MathPuzzle
         return checkAnswer();
     }
 
-    private double evaluate(String expr, double x) 
+    private double evaluate(String expr, Map<String, Double> vars) 
     {
-        expr = expr.replaceAll("\\s+", "").replaceAll("x", "(" + x + ")");
-        return evalBasic(expr);
+        expr = expr.replaceAll("\\s+", "");
+        return new Parser(expr, vars).parseExpression();
     }
 
-    private double evalBasic(String expr) 
+    private static class Parser 
     {
-        // Handle parentheses
-        while (expr.contains("(")) 
+        private final String input;
+        private final Map<String, Double> vars;
+        private int pos = -1, ch;
+
+        Parser(String input, Map<String, Double> vars) 
         {
-            int close = expr.indexOf(')');
-            int open = expr.lastIndexOf('(', close);
-            double inner = evalBasic(expr.substring(open + 1, close));
-            expr = expr.substring(0, open) + inner + expr.substring(close + 1);
+            this.input = input;
+            this.vars = vars;
+            nextChar();
         }
 
-        List<Double> terms = new ArrayList<>();
-        List<Character> ops = new ArrayList<>();
-        StringBuilder num = new StringBuilder();
-
-        for (int i = 0; i < expr.length(); i++) 
+        void nextChar() 
         {
-            char c = expr.charAt(i);
-            if (c == '+' || c == '-') {
-                terms.add(evalTerm(num.toString()));
-                ops.add(c);
-                num.setLength(0);
-            } else {
-                num.append(c);
+            ch = (++pos < input.length()) ? input.charAt(pos) : -1;
+        }
+
+        boolean eat(int charToEat) 
+        {
+            while (ch == ' ') nextChar();
+            if (ch == charToEat) 
+            {
+                nextChar();
+                return true;
+            }
+            return false;
+        }
+
+        double parseExpression() 
+        {
+            double x = parseTerm();
+            for (;;) 
+            {
+                if (eat('+')) x += parseTerm();
+                else if (eat('-')) x -= parseTerm();
+                else return x;
             }
         }
-        if (num.length() > 0) terms.add(evalTerm(num.toString()));
 
-        double result = terms.get(0);
-        for (int i = 0; i < ops.size(); i++) 
+        double parseTerm() 
         {
-            char op = ops.get(i);
-            double val = terms.get(i + 1);
-            if (op == '+') result += val;
-            else result -= val;
-        }
-        return result;
-    }
-
-    private double evalTerm(String expr) 
-    {
-        double result = 1;
-        String[] mulParts = expr.split("\\*");
-        for (String p : mulParts) 
-        {
-            if (p.contains("/")) 
+            double x = parseFactor();
+            for (;;) 
             {
-                String[] divParts = p.split("/");
-                double val = Double.parseDouble(divParts[0]);
-                for (int i = 1; i < divParts.length; i++) 
-                {
-                    val /= Double.parseDouble(divParts[i]);
-                }
-                result *= val;
+                if (eat('*')) x *= parseFactor();
+                else if (eat('/')) x /= parseFactor();
+                else return x;
+            }
+        }
+
+        double parseFactor() 
+        {
+            if (eat('+')) return parseFactor();
+            if (eat('-')) return -parseFactor();
+
+            double x;
+            int startPos = this.pos;
+
+            if (eat('(')) 
+            {
+                x = parseExpression();
+                eat(')');
+            } else if ((ch >= '0' && ch <= '9') || ch == '.') 
+            {
+                while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                x = Double.parseDouble(input.substring(startPos, this.pos));
+            } else if (Character.isLetter(ch)) 
+            {
+                while (Character.isLetterOrDigit(ch)) nextChar();
+                String var = input.substring(startPos, this.pos);
+                x = vars.getOrDefault(var, 0.0);
             } else 
             {
-                result *= Double.parseDouble(p);
+                throw new RuntimeException("Unexpected: " + (char) ch);
             }
-        }
-        return result;
-    }
 
+            if (eat('^')) x = Math.pow(x, parseFactor());
+            return x;
+        }
+    }
 
     public String getHint() 
     {
@@ -133,6 +156,25 @@ public class MathPuzzle
     {
         this.answer = null;
         this.hintsUsed = 0;
+    }
+
+    private Map<String, Double> parseAnswerString(String str) 
+    {
+        Map<String, Double> map = new HashMap<>();
+        if (str == null || str.isEmpty()) return map;
+
+        String[] parts = str.split(",");
+        for (String p : parts) 
+        {
+            String[] kv = p.split("=");
+            if (kv.length == 2) 
+            {
+                try {
+                    map.put(kv[0].trim(), Double.parseDouble(kv[1].trim()));
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        return map;
     }
 
     public int getPuzzleId() { return puzzleId; }

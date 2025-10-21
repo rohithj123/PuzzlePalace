@@ -51,23 +51,45 @@ public class PlayerManager
         return Collections.unmodifiableList(new ArrayList<>(players));
     }
 
+    public synchronized List <Player> loadPlayersFromFile(String filePath) {
+        List<Player> loadedPlayers = DataLoader.loadUsers(filePath);
+        players.clear();
+        if (loadedPlayers != null) {
+            for (Player player : loadedPlayers) {
+                addPlayer(player);
+            }
+        }
+        return getAllPlayers();
+    }
+
     public synchronized Player getPlayerByUsername(String username) 
     {
-        if (username == null) return null;
+        if (username == null) {
+            return null;
+        }
         String cleaned = username.trim();
         for (Player p : players) {
-            if (p != null && p.getUsername() != null && p.getUsername().equalsIgnoreCase(cleaned)) 
-            {
+            if (p != null && p.getUsername() != null && p.getUsername().equalsIgnoreCase(cleaned)) {
                 return p;
             }
         }
         return null;
     }
 
-    public synchronized boolean removePlayer(Player player) 
-    {
+    public synchronized Player authenticate(String username, String password) {
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            return null;
+        }
+        Player candidate = getPlayerByUsername(username);
+        if (candidate == null) {
+            return null;
+        }
+        return candidate.login(username, password) ? candidate : null;
+    }
+
+    public synchronized boolean removePlayer(Player player) {
         if (player == null) return false;
-        return players.remove(player);
+        return players.remove(player);  
     }
 
     public synchronized boolean updatePlayer(Player updated)

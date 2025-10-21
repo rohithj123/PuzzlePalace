@@ -46,21 +46,28 @@ public class PuzzlePalaceFacade {
     }
 
     public Player login(String userName, String password) {
-        if (userName == null || userName.isBlank() || password == null) {
-            return null;
-        }
-
-        Player matchedPlayer = findUser(userName);
-        if (matchedPlayer == null) {
-            return null;
-        }
-
-        if (matchedPlayer.login(matchedPlayer.getUsername(), password)) {
-            this.currentPlayer = matchedPlayer;
-            return this.currentPlayer;
-        }
+    if (userName == null || userName.isBlank() || password == null || password.isBlank()) {
+        System.out.println("⚠️ Username or password cannot be blank.");
         return null;
     }
+
+    Player player = findUser(userName);
+    if (player == null) {
+        System.out.println("No user found with username: " + userName);
+        return null;
+    }
+
+    boolean success = player.login(userName, password);
+    if (!success) {
+        System.out.println("Incorrect password for user: " + userName);
+        return null;
+    }
+
+    this.currentPlayer = player;
+    System.out.println("Login successful! Welcome, " + player.getUsername() + ".");
+    return this.currentPlayer;
+}
+
 
 
     public void logout() {

@@ -21,10 +21,22 @@ public class DataWriter {
         for (Player p : players) {
             String username = safeGetString(p, "getUsername", "username");
             String email = safeGetString(p, "getEmail", "email");
+            String playerId = safeGetString(p, "getPlayerID", "playerID");
+            String passwordHash = safeGetString(p, "getPasswordHash", "passwordHash");
+            String guestFlag = safeGetString(p, "isGuest", "guest");
 
             JSONObject playerObj = new JSONObject();
+            if (!playerId.isEmpty()) {
+                playerObj.put("playerID", playerId);
+            }
             playerObj.put("username", username);
             playerObj.put("email", email);
+            if (!passwordHash.isEmpty()) {
+                playerObj.put("passwordHash", passwordHash);
+            }
+            if (!guestFlag.isEmpty()) {
+                playerObj.put("isGuest", Boolean.parseBoolean(guestFlag));
+            }
             playerArray.add(playerObj);
         }
 

@@ -163,4 +163,10 @@ public class Room {
     public int hashCode() {
         return Objects.hash(roomId);
     }
+
+
+    public Score getScoreDetails() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getScoreDetails'");
+    }
 }

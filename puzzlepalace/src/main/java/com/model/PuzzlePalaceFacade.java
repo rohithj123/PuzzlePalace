@@ -1,5 +1,6 @@
 package com.model;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PuzzlePalaceFacade {
@@ -8,6 +9,7 @@ public class PuzzlePalaceFacade {
     private Progress progress;
     private Leaderboard leaderboard;
     private Settings settings;
+    private Room currentRoom;
     private final PlayerManager playerManager;
     private final String userDataPath;
 
@@ -23,7 +25,20 @@ public class PuzzlePalaceFacade {
     }
 
     private void loadUsers() {
-        playerManager.loadPlayersFromFile(userDataPath);
+        try {
+            List<Player> loaded = playerManager.loadPlayersFromFile(userDataPath);
+            if (loaded == null || loaded.isEmpty()) {
+                seedDefaultPlayers();
+            }
+        } catch (NoClassDefFoundError error) {
+            System.out.println("PuzzlePalaceFacade: JSON parser unavailable, using fallback players.");
+            seedDefaultPlayers();
+        }
+    }
+
+    private void seedDefaultPlayers() {
+        Player fallback = new Player("PlayerOne", "playerone@example.com", "SecretPass1!");
+        playerManager.addPlayer(fallback);
     }
 
     public Player login(String userName, String password) {
@@ -32,10 +47,20 @@ public class PuzzlePalaceFacade {
             return null;
         }
         this.currentPlayer = authenticated;
-        return this.currentPlayer;
-    }
-
-    public void logout() {
+        this.progress = currentPlayer.getProgress();
+        if (this.progress != null) {
+            this.progress.loadProgress();
+        }
+        this.currentRoom = summarisePlayerRoom(currentPlayer);
+                return this.currentPlayer;
+            }
+        
+            private Room summarisePlayerRoom(Player currentPlayer2) {
+                
+                throw new UnsupportedOperationException("Unimplemented method 'summarisePlayerRoom'");
+            }
+        
+            public void logout() {
     }
 
     public Player createAccount(String userName, String password) {
@@ -75,7 +100,13 @@ public class PuzzlePalaceFacade {
     }
 
     public Room getCurrentRoom() {
-        return null;
+        if (currentPlayer == null) {
+            return null;
+        }
+        if (currentRoom == null) {
+            currentRoom = summarisePlayerRoom(currentPlayer);
+        }
+        return currentRoom;
     }
 
     public List<Room> listAvailableRooms() {

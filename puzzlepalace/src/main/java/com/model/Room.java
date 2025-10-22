@@ -14,6 +14,7 @@ public class Room {
     private int estimatedTimeMinutes;
     private final List<Puzzle> puzzles;
     private final List<String> exits;
+    private Score score;
 
     public Room() {
         this.puzzles = new ArrayList<>();
@@ -27,7 +28,8 @@ public class Room {
                 String difficulty,
                 int estimatedTimeMinutes,
                 List<Puzzle> puzzles,
-                List<String> exits) {
+                List<String> exits,
+                Score score) {
         this();
         this.roomId = roomId;
         this.name = name;
@@ -40,6 +42,7 @@ public class Room {
         if (exits != null) {
             this.exits.addAll(exits);
         }
+        this.score = score;
     }
 
     public String getRoomId() {
@@ -117,6 +120,9 @@ public class Room {
         }
     }
 
+    public void setScoreDetails(Score score) {
+        this.score = score;
+    }
 
     public boolean isCompleted() {
         for (Puzzle puzzle : puzzles) {
@@ -148,6 +154,7 @@ public class Room {
                 ", estimatedTimeMinutes=" + estimatedTimeMinutes +
                 ", puzzles=" + puzzles.size() +
                 ", exits=" + exits +
+                ", score=" + (score != null ? score.calculateScore() : "null") +
                 '}';
     }
 
@@ -166,7 +173,6 @@ public class Room {
 
 
     public Score getScoreDetails() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getScoreDetails'");
+        return score;
     }
 }

@@ -27,6 +27,9 @@ public class DashboardController {
     private Label statusLabel;
 
     @FXML
+    private Label puzzleStatusLabel;
+
+    @FXML
     private void initialize() {
         refreshPlayerDetails();
     }
@@ -49,24 +52,40 @@ public class DashboardController {
         statusLabel.setText("Progress saved successfully.");
     }
 
+    @FXML
+    private void handleStartPuzzle() {
+        try {
+            App.setRoot("game");
+        } catch (IOException e) {
+            statusLabel.setText("Unable to open the puzzle view.");
+        }
+    }
+
+
     private void refreshPlayerDetails() {
         PuzzlePalaceFacade facade = App.getFacade();
-        Room current = facade.getCurrentRoom();
+        Player current = facade.getCurrentPlayer();
         if (current == null) {
             welcomeLabel.setText("No player logged in.");
             scoreLabel.setText("Score: --");
             puzzlesSolvedLabel.setText("Puzzles solved: --");
             hintsUsedLabel.setText("Hints used: --");
             statusLabel.setText("Please log in again.");
+            if (puzzleStatusLabel != null) {
+                puzzleStatusLabel.setText("Log in to access puzzles.");
+            }
             return;
         }
 
-        welcomeLabel.setText("Welcome back, " + current.getName() + "!");
+        welcomeLabel.setText("Welcome back, " + current.getUsername() + "!");
         Score score = current.getScoreDetails();
         int totalScore = score != null ? score.calculateScore() : 0;
         scoreLabel.setText("Score: " + totalScore);
         puzzlesSolvedLabel.setText("Puzzles solved: " + (score != null ? score.getPuzzlesSolved() : 0));
         hintsUsedLabel.setText("Hints used: " + (score != null ? score.getHintsUsed() : 0));
         statusLabel.setText("Your adventure awaits!");
+        if (puzzleStatusLabel != null) {
+            puzzleStatusLabel.setText(facade.describeCurrentPuzzleStatus());
+        }
     }
 }

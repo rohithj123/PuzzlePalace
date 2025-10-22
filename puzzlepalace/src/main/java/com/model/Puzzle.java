@@ -7,13 +7,14 @@ public abstract class Puzzle {
     protected Hint hints;
 
     public Puzzle() {
+        this(0, null, null, null);
     }
 
     public Puzzle(int puzzleId, String description, String status, Hint hints) {
         this.puzzleId = puzzleId;
         this.description = description;
-        this.status = "UNSOLVED";
-        this.hints = new Hint();
+        this.status = status == null || status.isBlank() ? "UNSOLVED" : status;
+        this.hints = hints != null ? hints : new Hint();
     }
 
     public boolean trySolve(String attempt) {
@@ -28,11 +29,38 @@ public abstract class Puzzle {
 
     public void resetPuzzle() {
         this.status = "UNSOLVED";
+        if (hints != null) {
+            hints.resetHintsUsed();
+        }
     }
 
     public void undoLastMove() {
-
     }
+    
+    public int getPuzzleId() {
+        return puzzleId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public int getHintsUsed() {
+        return hints == null ? 0 : hints.getHintsUsed();
+    }
+
+    public int getMaxHints() {
+        return hints == null ? 0 : hints.getMaxHints();
+    }
+
+    public String requestHint() {
+        return hints == null ? "No hints available." : hints.getHint();
+    }
+
 
     @Override
     public String toString() {

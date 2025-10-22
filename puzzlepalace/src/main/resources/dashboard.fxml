@@ -22,11 +22,13 @@
         <VBox alignment="CENTER" spacing="16.0">
             <Label fx:id="welcomeLabel" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
             <Label fx:id="statusLabel" style="-fx-font-size: 16px;" wrapText="true" maxWidth="480" />
+            <Label fx:id="puzzleStatusLabel" style="-fx-font-size: 16px; -fx-text-fill: #1d3557;" wrapText="true" maxWidth="480" />
             <VBox spacing="10.0" alignment="CENTER_LEFT" maxWidth="360">
                 <Label fx:id="scoreLabel" style="-fx-font-size: 18px;" />
                 <Label fx:id="puzzlesSolvedLabel" style="-fx-font-size: 18px;" />
                 <Label fx:id="hintsUsedLabel" style="-fx-font-size: 18px;" />
             </VBox>
+                        <Button text="Enter Training Puzzle" onAction="#handleStartPuzzle" />
         </VBox>
     </center>
 </BorderPane>

@@ -3,6 +3,7 @@ package com.model;
 import java.util.Collections;
 import java.util.List;
 
+
 public class PuzzlePalaceFacade {
 
     private Player currentPlayer;
@@ -10,6 +11,7 @@ public class PuzzlePalaceFacade {
     private Leaderboard leaderboard;
     private Settings settings;
     private Room currentRoom;
+    private Puzzle activePuzzle;
     private final PlayerManager playerManager;
     private final String userDataPath;
 
@@ -52,16 +54,49 @@ public class PuzzlePalaceFacade {
             this.progress.loadProgress();
         }
         this.currentRoom = summarisePlayerRoom(currentPlayer);
-                return this.currentPlayer;
-            }
-        
-            private Room summarisePlayerRoom(Player currentPlayer2) {
-                
-                throw new UnsupportedOperationException("Unimplemented method 'summarisePlayerRoom'");
-            }
-        
-            public void logout() {
-            }
+        return this.currentPlayer;
+    }
+
+    private Room summarisePlayerRoom(Player player) {
+        if (player == null) {
+            activePuzzle = null;
+            return null;
+        }
+
+        SimplePuzzle puzzle = new SimplePuzzle(
+                1001,
+                "A keypad glows with four buttons labelled with letters. Enter the 4-letter code to escape.",
+                "LIME",
+                "Start by matching the colors of the wires to fruit names.",
+                "Two of the letters are vowels, and the first letter is also the color of the door.",
+                "The code spells a tart green fruit."
+        );
+
+        Room room = new Room(
+                "demo-room",
+                "Training Chamber",
+                "Practice solving a quick riddle before entering the real escape room.",
+                "Easy",
+                5,
+                Collections.singletonList(puzzle),
+                Collections.singletonList("Exit"),
+                player.getScoreDetails()
+        );
+
+        this.activePuzzle = puzzle;
+        return room;
+    }
+
+    public void logout() {
+        saveCurrentPlayerProgress();
+        if (currentPlayer != null) {
+            currentPlayer.logout();
+        }
+        currentPlayer = null;
+        progress = null;
+        currentRoom = null;
+        activePuzzle = null;
+    }
 
     public Player createAccount(String userName, String password) {
         if (userName == null || userName.isBlank() || password == null || password.isBlank()) {
@@ -126,17 +161,60 @@ public class PuzzlePalaceFacade {
         return currentRoom;
     }
 
-    public List<Room> listAvailableRooms() {
-        return null;
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
+
+    public Puzzle getActivePuzzle() {
+        if (activePuzzle == null) {
+            Room room = getCurrentRoom();
+            if (room != null) {
+                activePuzzle = room.getPuzzles().isEmpty() ? null : room.getPuzzles().get(0);
+            }
+        }
+        return activePuzzle;
+    }
+
+    public String describeCurrentPuzzleStatus() {
+        Puzzle puzzle = getActivePuzzle();
+        if (puzzle == null) {
+            return "No puzzle loaded.";
+        }
+        String status = puzzle.getStatus();
+        if ("SOLVED".equalsIgnoreCase(status)) {
+            return "You cracked the training puzzle!";
+        }
+        if ("ATTEMPTED".equalsIgnoreCase(status)) {
+            return "The keypad is still locked. Try another code.";
+        }
+        return "A puzzle is waiting for you.";
+    }
+
+    public List<Room> listAvailableRooms() {
+        Room room = getCurrentRoom();
+        return room == null ? Collections.emptyList() : Collections.singletonList(room);    }
 
     public Puzzle getPuzzle(int puzzleId) {
-        return null;
-    }
+        Room room = getCurrentRoom();
+        if (room == null) {
+            return null;
+        }
+        return room.getPuzzleById(puzzleId);    }
 
     public boolean submitPuzzleAnswer(int puzzleId, String answer) {
-        return false;
-    }
+        Puzzle puzzle = getPuzzle(puzzleId);
+        if (puzzle == null) {
+            return false;
+        }
+        String previousStatus = puzzle.getStatus();
+        boolean solved = puzzle.trySolve(answer);
+        if (solved && (previousStatus == null || !"SOLVED".equalsIgnoreCase(previousStatus))) {
+            if (currentPlayer != null) {
+                currentPlayer.recordPuzzleSolved();
+                currentPlayer.awardBonusPoints(100);
+            }
+        }
+        return solved;    }
 
     public List<Clue> getCluesForPuzzle(int puzzleId) {
         return null;
@@ -152,6 +230,28 @@ public class PuzzlePalaceFacade {
 
     public void saveCurrentPlayerProgress() {
         
-        throw new UnsupportedOperationException("Unimplemented method 'saveCurrentPlayerProgress'");
+        if (currentPlayer == null) {
+            return;
+        }
+        currentPlayer.saveProgress();
+        Score score = currentPlayer.getScoreDetails();
+        if (score != null) {
+            score.setHintsUsed(activePuzzle != null ? activePuzzle.getHintsUsed() : score.getHintsUsed());
+        }
+        DataWriter.saveUsers(playerManager.getAllPlayers(), userDataPath);
     }
+
+    public String requestHint(int puzzleId) {
+        Puzzle puzzle = getPuzzle(puzzleId);
+        if (puzzle == null) {
+            return "No puzzle loaded.";
+        }
+        String hint = puzzle.requestHint();
+        if (currentPlayer != null) {
+            Score score = currentPlayer.getScoreDetails();
+            if (score != null) {
+                score.setHintsUsed(puzzle.getHintsUsed());
+            }
+        }
+        return hint;    }
 }

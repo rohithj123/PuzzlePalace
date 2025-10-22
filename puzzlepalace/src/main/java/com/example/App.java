@@ -1,13 +1,15 @@
 package com.example;
 
+import java.io.IOException;
+import java.net.URL;
+
 import com.model.PuzzlePalaceFacade;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 
 /**
@@ -38,10 +40,16 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        // Use absolute path from the classpath root that matches your resources folder
+        URL url = App.class.getResource("/com/puzzlepalace/" + fxml + ".fxml");
+        System.out.println("DEBUG: FXML URL = " + url);
+        if (url == null) {
+            throw new IllegalStateException("FXML file not found: " + fxml + ".fxml");
+        }
+    
+        FXMLLoader fxmlLoader = new FXMLLoader(url);
         return fxmlLoader.load();
     }
-
 
     public static void main(String[] args) {
         launch();

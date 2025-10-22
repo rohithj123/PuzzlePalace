@@ -46,4 +46,13 @@ public class LoginController {
             feedbackLabel.setText("Unable to open the dashboard view.");
         }
     }
+
+    @FXML
+    private void handleShowSignup() {
+        try {
+            App.setRoot("signup");
+        } catch (IOException e) {
+            feedbackLabel.setText("Unable to open the sign up view.");
+        }
+    }
 }

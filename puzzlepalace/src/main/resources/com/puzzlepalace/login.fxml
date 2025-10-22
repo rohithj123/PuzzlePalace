@@ -26,6 +26,7 @@
             </VBox>
             <HBox spacing="16.0" alignment="CENTER">
                 <Button text="Login" onAction="#handleLogin" prefWidth="160" />
+                <Button text="Sign Up" onAction="#handleShowSignup" prefWidth="160" />
             </HBox>
             <Label fx:id="feedbackLabel" style="-fx-text-fill: crimson;" wrapText="true" maxWidth="320" />
         </VBox>

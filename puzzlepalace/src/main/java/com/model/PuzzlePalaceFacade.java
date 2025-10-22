@@ -61,10 +61,27 @@ public class PuzzlePalaceFacade {
             }
         
             public void logout() {
-    }
+            }
 
     public Player createAccount(String userName, String password) {
-        return null;
+        if (userName == null || userName.isBlank() || password == null || password.isBlank()) {
+            return null;
+        }
+
+        String trimmedUsername = userName.trim();
+        if (playerManager.getPlayerByUsername(trimmedUsername) != null) {
+            return null;
+        }
+
+        Player newPlayer = new Player(trimmedUsername, null, password);
+        boolean added = playerManager.addPlayer(newPlayer);
+        if (!added) {
+            return null;
+        }
+
+        DataWriter.saveUsers(playerManager.getAllPlayers(), userDataPath);
+        return newPlayer;
+
     }
 
     public void deleteAccount(int playerId) {
@@ -134,7 +151,7 @@ public class PuzzlePalaceFacade {
     }
 
     public void saveCurrentPlayerProgress() {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'saveCurrentPlayerProgress'");
     }
 }

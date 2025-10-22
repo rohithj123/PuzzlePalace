@@ -4,7 +4,7 @@ import java.util.List;
 
 public class DataLoaderTester {
     public static void main(String[] args) {
-        String filePath = "data/users.json"; // adjust path for your project
+        String filePath = "data/users.json"; 
         List<Player> players = DataLoader.loadUsers(filePath);
 
         System.out.println("Loaded " + players.size() + " players:");

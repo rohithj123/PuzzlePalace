@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import com.model.PuzzlePalaceFacade;
 
 /**
  * JavaFX App
@@ -43,16 +42,15 @@ public class App extends Application {
         return fxmlLoader.load();
     }
 
-   
-
 
     public static void main(String[] args) {
         launch();
     }
 
     public static PuzzlePalaceFacade getFacade() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFacade'");
+
+        return FACADE;
+
     }
 
 

@@ -101,4 +101,9 @@ public class PuzzlePalaceFacade {
     public List<Player> getUserList() {
         return playerManager.getAllPlayers();
     }
+
+    public void saveCurrentPlayerProgress() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveCurrentPlayerProgress'");
+    }
 }

@@ -30,6 +30,9 @@ public class GameController {
     @FXML
     private Button hintButton;
 
+    @FXML
+    private Button nextButton;
+
     private Puzzle activePuzzle;
 
     @FXML
@@ -44,6 +47,7 @@ public class GameController {
             puzzlePromptLabel.setText("No puzzle available.");
             submitButton.setDisable(true);
             hintButton.setDisable(true);
+            nextButton.setVisible(false); // ensure hidden when no puzzle
             return;
         }
 
@@ -54,6 +58,7 @@ public class GameController {
         answerField.clear();
         submitButton.setDisable(false);
         hintButton.setDisable(activePuzzle.getMaxHints() == 0);
+        nextButton.setVisible(false); // hide by default
 
         if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
             displaySolvedState();
@@ -100,5 +105,13 @@ public class GameController {
         answerField.setDisable(true);
         submitButton.setDisable(true);
         hintButton.setDisable(true);
+        nextButton.setVisible(true); 
+    }
+
+    @FXML
+    private void handleNextRoom() {
+        PuzzlePalaceFacade facade = App.getFacade();
+        facade.enterRoom(0);
+        loadPuzzle();
     }
 }

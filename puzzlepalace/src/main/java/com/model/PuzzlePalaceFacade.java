@@ -149,6 +149,8 @@ public class PuzzlePalaceFacade {
     }
 
     public void enterRoom(int roomId) {
+        this.currentRoom = null;
+        this.activePuzzle = null;
     }
 
     public Room getCurrentRoom() {

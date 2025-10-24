@@ -23,20 +23,28 @@
             <padding>
                 <Insets top="40" right="40" bottom="40" left="40" />
             </padding>
-                       <Label text="Escape Room: Math Gate" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
+            <Label text="Escape Room: Math Gate" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
             <Label fx:id="timerLabel" text="Timer: 00:00" style="-fx-font-size: 16px; -fx-text-fill: #1d3557;" />
 
             <Label fx:id="puzzlePromptLabel" wrapText="true" maxWidth="560" style="-fx-font-size: 16px;" />
             <VBox spacing="10.0" alignment="CENTER">
-                                <TextField fx:id="answerField" promptText="Enter your answer" maxWidth="240" />
+                <TextField fx:id="answerField" promptText="Enter your answer" maxWidth="240" />
                 <HBox spacing="12.0" alignment="CENTER">
                     <Button fx:id="submitButton" text="Unlock" onAction="#handleSubmitAnswer" />
                     <Button fx:id="hintButton" text="Need a Hint?" onAction="#handleRequestHint" />
                 </HBox>
+
+                <Button fx:id="nextButton"
+                        text="Next Room"
+                        onAction="#handleNextRoom"
+                        visible="false"
+                        maxWidth="160"
+                        style="-fx-font-size: 14px; -fx-font-weight: bold;" />
             </VBox>
+
             <Label fx:id="feedbackLabel" style="-fx-text-fill: #2d6a4f; -fx-font-size: 16px;" wrapText="true" maxWidth="480" />
             <Label fx:id="hintLabel" style="-fx-text-fill: #1d3557;" wrapText="true" maxWidth="480" />
-                        <Label fx:id="progressSummaryLabel" style="-fx-font-size: 14px; -fx-text-fill: #1d3557;" wrapText="true" maxWidth="480" />
+            <Label fx:id="progressSummaryLabel" style="-fx-font-size: 14px; -fx-text-fill: #1d3557;" wrapText="true" maxWidth="480" />
         </VBox>
     </center>
 </BorderPane>

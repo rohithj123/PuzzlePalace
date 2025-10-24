@@ -5,10 +5,14 @@ import java.io.IOException;
 import com.model.Puzzle;
 import com.model.PuzzlePalaceFacade;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
+
 
 public class GameController {
 
@@ -20,6 +24,12 @@ public class GameController {
 
     @FXML
     private Label hintLabel;
+
+    @FXML
+    private Label timerLabel;
+
+    @FXML
+    private Label progressSummaryLabel;
 
     @FXML
     private TextField answerField;
@@ -35,9 +45,12 @@ public class GameController {
 
     private Puzzle activePuzzle;
 
+    private Timeline timerTimeline;
+
     @FXML
     private void initialize() {
         loadPuzzle();
+        updateProgressSummary();
     }
 
     private void loadPuzzle() {
@@ -47,7 +60,10 @@ public class GameController {
             puzzlePromptLabel.setText("No puzzle available.");
             submitButton.setDisable(true);
             hintButton.setDisable(true);
-            nextButton.setVisible(false); // ensure hidden when no puzzle
+            nextButton.setVisible(false); 
+            stopTimer();
+            updateTimerLabelWithSeconds(0);
+            updateProgressSummary();
             return;
         }
 
@@ -62,7 +78,11 @@ public class GameController {
 
         if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
             displaySolvedState();
+        } else {
+            facade.ensureActivePuzzleTimerStarted();
+            startTimer();
         }
+        updateProgressSummary();
     }
 
     @FXML
@@ -95,6 +115,7 @@ public class GameController {
     @FXML
     private void handleReturnToDashboard() {
         try {
+            stopTimer();
             App.setRoot("dashboard");
         } catch (IOException e) {
             feedbackLabel.setText("Unable to return to the dashboard.");
@@ -106,12 +127,70 @@ public class GameController {
         submitButton.setDisable(true);
         hintButton.setDisable(true);
         nextButton.setVisible(true); 
+        stopTimer();
+        long lastSeconds = App.getFacade().getLastCompletionSeconds();
+        updateTimerLabelWithSeconds(lastSeconds);
+        updateProgressSummary();
     }
 
     @FXML
     private void handleNextRoom() {
         PuzzlePalaceFacade facade = App.getFacade();
+        stopTimer();
         facade.enterRoom(0);
         loadPuzzle();
+    }
+    private void startTimer() {
+        stopTimer();
+        updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds());
+        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
+                updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds())));
+        timerTimeline.setCycleCount(Timeline.INDEFINITE);
+        timerTimeline.play();
+    }
+
+    private void startTimer(boolean resetDisplay) {
+        stopTimer();
+        App.getFacade().ensureActivePuzzleTimerStarted();
+        if (resetDisplay) {
+            updateTimerLabelWithSeconds(0);
+        } else {
+            updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds());
+        }
+        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
+                updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds())));
+        timerTimeline.setCycleCount(Timeline.INDEFINITE);
+        timerTimeline.play();
+    }
+
+    private void stopTimer() {
+        if (timerTimeline != null) {
+            timerTimeline.stop();
+            timerTimeline = null;
+        }
+    }
+
+    private void updateTimerLabelWithSeconds(long totalSeconds) {
+        if (timerLabel == null) {
+            return;
+        }
+        long clamped = Math.max(0, totalSeconds);
+        long minutes = clamped / 60;
+        long seconds = clamped % 60;
+        timerLabel.setText(String.format("Timer: %02d:%02d", minutes, seconds));
+    }
+
+    private void updateProgressSummary() {
+        if (progressSummaryLabel == null) {
+            return;
+        }
+        long lastSeconds = App.getFacade().getLastCompletionSeconds();
+        if (lastSeconds > 0) {
+            long minutes = lastSeconds / 60;
+            long seconds = lastSeconds % 60;
+            progressSummaryLabel.setText(String.format("Previous escape time: %02d:%02d", minutes, seconds));
+        } else {
+            progressSummaryLabel.setText("No escape time recorded yet.");
+        }
     }
 }

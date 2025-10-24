@@ -1,5 +1,6 @@
 package com.model;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -151,6 +152,7 @@ public class PuzzlePalaceFacade {
     public void enterRoom(int roomId) {
         this.currentRoom = null;
         this.activePuzzle = null;
+        this.puzzleStartTime = null;
     }
 
     public Room getCurrentRoom() {
@@ -174,8 +176,40 @@ public class PuzzlePalaceFacade {
                 activePuzzle = room.getPuzzles().isEmpty() ? null : (MathChallengePuzzle) room.getPuzzles().get(0);
             }
         }
+        ensureActivePuzzleTimerStarted();
         return activePuzzle;
     }
+
+    public void ensureActivePuzzleTimerStarted() {
+        if (activePuzzle != null && puzzleStartTime == null && !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
+            puzzleStartTime = Instant.now();
+        }
+    }
+
+    public void restartActivePuzzleTimer() {
+        if (activePuzzle == null) {
+            puzzleStartTime = null;
+            return;
+        }
+        if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
+            puzzleStartTime = null;
+        } else {
+            puzzleStartTime = Instant.now();
+        }
+    }
+
+    public long getActivePuzzleElapsedSeconds() {
+        if (puzzleStartTime == null) {
+            return 0L;
+        }
+        return Math.max(0L, Duration.between(puzzleStartTime, Instant.now()).getSeconds());
+    }
+
+    public long getLastCompletionSeconds() {
+        return Math.max(0L, lastCompletionSeconds);
+    }
+    
+
 
     public String describeCurrentPuzzleStatus() {
         Puzzle puzzle = getActivePuzzle();
@@ -215,6 +249,10 @@ public class PuzzlePalaceFacade {
                 currentPlayer.recordPuzzleSolved();
                 currentPlayer.awardBonusPoints(100);
             }
+            if (puzzleStartTime != null) {
+                lastCompletionSeconds = Math.max(0L, Duration.between(puzzleStartTime, Instant.now()).getSeconds());
+            }
+            puzzleStartTime = null;
         }
         return solved;    }
 

@@ -1,5 +1,7 @@
 package com.model;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,9 +13,11 @@ public class PuzzlePalaceFacade {
     private Leaderboard leaderboard;
     private Settings settings;
     private Room currentRoom;
-    private Puzzle activePuzzle;
+    private MathChallengePuzzle activePuzzle;
     private final PlayerManager playerManager;
     private final String userDataPath;
+        private Instant puzzleStartTime;
+    private long lastCompletionSeconds;
 
     public PuzzlePalaceFacade() {
         this("json/users.json");
@@ -63,27 +67,23 @@ public class PuzzlePalaceFacade {
             return null;
         }
 
-        SimplePuzzle puzzle = new SimplePuzzle(
-                1001,
-                "A keypad glows with four buttons labelled with letters. Enter the 4-letter code to escape.",
-                "LIME",
-                "Start by matching the colors of the wires to fruit names.",
-                "Two of the letters are vowels, and the first letter is also the color of the door.",
-                "The code spells a tart green fruit."
+        MathChallengePuzzle puzzle = new MathChallengePuzzle(
+            2001,
+            "A glowing equation hovers over the vault: (12 + 8) / 4 + 3^2 = ?\n" +
+                    "Punch in the final number to power the escape hatch.",
+            14,
+            "Work from the inside out—parentheses first!",
+            "Remember that exponents come before addition.",
+            "After dividing by four, you still need to add the value of 3²."
         );
 
-        Room room = new Room(
-                "demo-room",
-                "Training Chamber",
-                "Practice solving a quick riddle before entering the real escape room.",
-                "Easy",
-                5,
-                Collections.singletonList(puzzle),
-                Collections.singletonList("Exit"),
-                player.getScoreDetails()
-        );
+        Room room = new Room();
+        
 
         this.activePuzzle = puzzle;
+        Score score = player.getScoreDetails();
+        lastCompletionSeconds = score != null ? Math.max(0, score.getTimeTaken()) : 0;
+        puzzleStartTime = null;
         return room;
     }
 
@@ -165,11 +165,11 @@ public class PuzzlePalaceFacade {
         return currentPlayer;
     }
 
-    public Puzzle getActivePuzzle() {
+    public MathChallengePuzzle getActivePuzzle() {
         if (activePuzzle == null) {
             Room room = getCurrentRoom();
             if (room != null) {
-                activePuzzle = room.getPuzzles().isEmpty() ? null : room.getPuzzles().get(0);
+                activePuzzle = room.getPuzzles().isEmpty() ? null : (MathChallengePuzzle) room.getPuzzles().get(0);
             }
         }
         return activePuzzle;
@@ -254,4 +254,9 @@ public class PuzzlePalaceFacade {
             }
         }
         return hint;    }
+
+    public void startEscapeRoom() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'startEscapeRoom'");
+    }
 }

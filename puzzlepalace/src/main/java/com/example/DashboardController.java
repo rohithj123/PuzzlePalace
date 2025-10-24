@@ -24,6 +24,10 @@ public class DashboardController {
     private Label hintsUsedLabel;
 
     @FXML
+    private Label timeTakenLabel;
+
+
+    @FXML
     private Label statusLabel;
 
     @FXML
@@ -39,6 +43,8 @@ public class DashboardController {
         PuzzlePalaceFacade facade = App.getFacade();
         facade.logout();
         try {
+            App.getFacade().startEscapeRoom();
+
             App.setRoot("login");
         } catch (IOException e) {
             statusLabel.setText("Unable to return to the login view.");
@@ -70,6 +76,10 @@ public class DashboardController {
             scoreLabel.setText("Score: --");
             puzzlesSolvedLabel.setText("Puzzles solved: --");
             hintsUsedLabel.setText("Hints used: --");
+            if (timeTakenLabel != null) {
+                timeTakenLabel.setText("Last escape time: --");
+            }
+
             statusLabel.setText("Please log in again.");
             if (puzzleStatusLabel != null) {
                 puzzleStatusLabel.setText("Log in to access puzzles.");
@@ -83,9 +93,26 @@ public class DashboardController {
         scoreLabel.setText("Score: " + totalScore);
         puzzlesSolvedLabel.setText("Puzzles solved: " + (score != null ? score.getPuzzlesSolved() : 0));
         hintsUsedLabel.setText("Hints used: " + (score != null ? score.getHintsUsed() : 0));
+        if (timeTakenLabel != null) {
+            timeTakenLabel.setText("Last escape time: " + formatTime(score != null ? score.getTimeTaken() : 0));
+        }
         statusLabel.setText("Your adventure awaits!");
         if (puzzleStatusLabel != null) {
             puzzleStatusLabel.setText(facade.describeCurrentPuzzleStatus());
         }
     }
+    
+
+
+private String formatTime(int seconds) {
+    if (seconds <= 0) {
+        return "--";
+    }
+    int mins = seconds / 60;
+    int secs = seconds % 60;
+    if (mins <= 0) {
+        return secs + "s";
+    }
+    return mins + "m " + String.format("%02ds", secs);
+}
 }

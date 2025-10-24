@@ -1,5 +1,9 @@
 package com.model;
 
+import java.util.Collections;
+import java.util.List;
+
+
 public abstract class Puzzle {
     protected int puzzleId;
     protected String description;
@@ -60,6 +64,14 @@ public abstract class Puzzle {
     public String requestHint() {
         return hints == null ? "No hints available." : hints.getHint();
     }
+
+    public List<String> getAvailableHints() {
+        if (hints == null) {
+            return Collections.emptyList();
+        }
+        return hints.getAvailableHintsSnapshot();
+    }
+
 
 
     @Override

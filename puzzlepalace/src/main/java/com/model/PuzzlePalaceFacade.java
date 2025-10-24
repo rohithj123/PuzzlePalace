@@ -296,7 +296,20 @@ public class PuzzlePalaceFacade {
         return hint;    }
 
     public void startEscapeRoom() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'startEscapeRoom'");
+        if (currentPlayer == null) {
+            currentRoom = null;
+            activePuzzle = null;
+            puzzleStartTime = null;
+            lastCompletionSeconds = 0L;
+            return;
+        }
+
+        currentRoom = summarisePlayerRoom(currentPlayer);
+        if (currentRoom == null || currentRoom.getPuzzles().isEmpty()) {
+            activePuzzle = null;
+        } else {
+            activePuzzle = (MathChallengePuzzle) currentRoom.getPuzzles().get(0);
+        }
+        puzzleStartTime = null;
     }
 }

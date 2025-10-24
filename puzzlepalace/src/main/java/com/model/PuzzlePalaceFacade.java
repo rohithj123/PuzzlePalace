@@ -252,6 +252,11 @@ public class PuzzlePalaceFacade {
             if (puzzleStartTime != null) {
                 lastCompletionSeconds = Math.max(0L, Duration.between(puzzleStartTime, Instant.now()).getSeconds());
             }
+            Score score = currentPlayer != null ? currentPlayer.getScoreDetails() : null;
+            if (score != null) {
+                int seconds = (int) Math.min(Integer.MAX_VALUE, Math.max(0L, lastCompletionSeconds));
+                score.setTimeTaken(seconds);
+            }
             puzzleStartTime = null;
         }
         return solved;    }

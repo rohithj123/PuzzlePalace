@@ -1,6 +1,5 @@
 package com.model;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -78,6 +77,7 @@ public class PuzzlePalaceFacade {
         );
 
         Room room = new Room();
+        room.addPuzzle(puzzle);
         
 
         this.activePuzzle = puzzle;

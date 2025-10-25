@@ -23,9 +23,8 @@
             <padding>
                 <Insets top="40" right="40" bottom="40" left="40" />
             </padding>
-            <Label text="Escape Room: Math Gate" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
-            <Label fx:id="timerLabel" text="Timer: 00:00" style="-fx-font-size: 16px; -fx-text-fill: #1d3557;" />
-
+                <Label fx:id="roomTitleLabel" text="Escape Room: Math Gate" style="-fx-font-size: 28px; -fx-font-weight: bold;" />            
+                    <Label fx:id="timerLabel" text="Timer: 00:00" style="-fx-font-size: 16px; -fx-text-fill: #1d3557;" />
             <Label fx:id="puzzlePromptLabel" wrapText="true" maxWidth="560" style="-fx-font-size: 16px;" />
             <VBox spacing="10.0" alignment="CENTER">
                 <TextField fx:id="answerField" promptText="Enter your answer" maxWidth="240" />
@@ -38,6 +37,7 @@
                         text="Next Room"
                         onAction="#handleNextRoom"
                         visible="false"
+                        managed="false"
                         maxWidth="160"
                         style="-fx-font-size: 14px; -fx-font-weight: bold;" />
             </VBox>

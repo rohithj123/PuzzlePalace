@@ -1,13 +1,13 @@
 package com.example;
 
+import java.io.IOException;
+
 import com.model.Player;
 import com.model.PuzzlePalaceFacade;
-import com.model.Room;
 import com.model.Score;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-
-import java.io.IOException;
 
 public class DashboardController {
 
@@ -61,6 +61,8 @@ public class DashboardController {
     @FXML
     private void handleStartPuzzle() {
         try {
+            PuzzlePalaceFacade facade = App.getFacade();
+            facade.resetProgressToFirstRoom();
             App.setRoot("game");
         } catch (IOException e) {
             statusLabel.setText("Unable to open the puzzle view.");

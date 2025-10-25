@@ -2,6 +2,7 @@ package com.model;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,11 +14,13 @@ public class PuzzlePalaceFacade {
     private Leaderboard leaderboard;
     private Settings settings;
     private Room currentRoom;
-    private MathChallengePuzzle activePuzzle;
+    private Puzzle activePuzzle;
     private final PlayerManager playerManager;
     private final String userDataPath;
         private Instant puzzleStartTime;
     private long lastCompletionSeconds;
+    private final List<Room> availableRooms;
+    private int currentRoomIndex;
 
     public PuzzlePalaceFacade() {
         this("json/users.json");
@@ -27,6 +30,8 @@ public class PuzzlePalaceFacade {
         this.playerManager = new PlayerManager();
         this.userDataPath = userDataPath;
         this.settings = new Settings();
+        this.availableRooms = new ArrayList<>();
+        this.currentRoomIndex = -1;
         loadUsers();
     }
 
@@ -57,15 +62,37 @@ public class PuzzlePalaceFacade {
         if (this.progress != null) {
             this.progress.loadProgress();
         }
-        this.currentRoom = summarisePlayerRoom(currentPlayer);
+        startEscapeRoom();
         return this.currentPlayer;
     }
 
     private Room summarisePlayerRoom(Player player) {
         if (player == null) {
+            availableRooms.clear();
             activePuzzle = null;
+            currentRoom = null;
+            currentRoomIndex = -1;
             return null;
         }
+        if (availableRooms.isEmpty() || currentRoom == null) {
+            buildRoomsFor(player);
+        }
+        return currentRoom;
+    }
+
+    private void buildRoomsFor(Player player) {
+        availableRooms.clear();
+        currentRoom = null;
+        activePuzzle = null;
+        currentRoomIndex = -1;
+        puzzleStartTime = null;
+
+        if (player == null) {
+            lastCompletionSeconds = 0L;
+            return;
+        }
+
+
 
         MathChallengePuzzle puzzle = new MathChallengePuzzle(
             2001,
@@ -77,15 +104,36 @@ public class PuzzlePalaceFacade {
             "After dividing by four, you still need to add the value of 3²."
         );
 
-        Room room = new Room();
-        room.addPuzzle(puzzle);
+        Room mathRoom = new Room();
+        mathRoom.setRoomId("math-gate");
+        mathRoom.setName("Math Gate");
+        mathRoom.setDescription("A glowing equation blocks the exit.");
+        mathRoom.addPuzzle(puzzle);
+
+        SimplePuzzle wordPuzzle = new SimplePuzzle(
+                2002,
+                "Shelves whisper riddles: unscramble the letters L I G H T to reveal the password.",
+                "light",
+                "Think about what helps you see in the dark.",
+                "The answer is something that shines brightly."
+        );
+
+        Room wordRoom = new Room();
+        wordRoom.setRoomId("word-puzzle");
+        wordRoom.setName("Word Puzzle Room");
+        wordRoom.setDescription("Stacks of books hide a secret word.");
+        wordRoom.addPuzzle(wordPuzzle);
+
+        availableRooms.add(mathRoom);
+        availableRooms.add(wordRoom);
+
+        currentRoomIndex = 0;
+        currentRoom = mathRoom;
+        activePuzzle = puzzle;
         
 
-        this.activePuzzle = puzzle;
         Score score = player.getScoreDetails();
         lastCompletionSeconds = score != null ? Math.max(0, score.getTimeTaken()) : 0;
-        puzzleStartTime = null;
-        return room;
     }
 
     public void logout() {
@@ -97,6 +145,9 @@ public class PuzzlePalaceFacade {
         progress = null;
         currentRoom = null;
         activePuzzle = null;
+        availableRooms.clear();
+        currentRoomIndex = -1;
+        puzzleStartTime = null;
     }
 
     public Player createAccount(String userName, String password) {
@@ -149,17 +200,21 @@ public class PuzzlePalaceFacade {
     public void setDifficulty(String level) {
     }
 
-    public void enterRoom(int roomId) {
-        this.currentRoom = null;
-        this.activePuzzle = null;
-        this.puzzleStartTime = null;
+    public void enterRoom(int roomIndex) {
+        if (roomIndex < 0 || roomIndex >= availableRooms.size()) {
+            return;
+        }
+        currentRoomIndex = roomIndex;
+        currentRoom = availableRooms.get(roomIndex);
+        activePuzzle = currentRoom.getPuzzles().isEmpty() ? null : currentRoom.getPuzzles().get(0);
+        puzzleStartTime = null;
     }
 
     public Room getCurrentRoom() {
         if (currentPlayer == null) {
             return null;
         }
-        if (currentRoom == null) {
+        if (currentRoom == null || availableRooms.isEmpty()) {
             currentRoom = summarisePlayerRoom(currentPlayer);
         }
         return currentRoom;
@@ -169,11 +224,11 @@ public class PuzzlePalaceFacade {
         return currentPlayer;
     }
 
-    public MathChallengePuzzle getActivePuzzle() {
+    public Puzzle getActivePuzzle() {
         if (activePuzzle == null) {
             Room room = getCurrentRoom();
             if (room != null) {
-                activePuzzle = room.getPuzzles().isEmpty() ? null : (MathChallengePuzzle) room.getPuzzles().get(0);
+                activePuzzle = room.getPuzzles().isEmpty() ? null : room.getPuzzles().get(0);
             }
         }
         ensureActivePuzzleTimerStarted();
@@ -227,16 +282,58 @@ public class PuzzlePalaceFacade {
     }
 
     public List<Room> listAvailableRooms() {
-        Room room = getCurrentRoom();
-        return room == null ? Collections.emptyList() : Collections.singletonList(room);    }
+        if (currentPlayer == null) {
+            return Collections.emptyList();
+        }
+        if (availableRooms.isEmpty()) {
+            summarisePlayerRoom(currentPlayer);
+        }
+        return Collections.unmodifiableList(new ArrayList<>(availableRooms));
+    }
 
     public Puzzle getPuzzle(int puzzleId) {
         Room room = getCurrentRoom();
         if (room == null) {
             return null;
         }
-        return room.getPuzzleById(puzzleId);    }
+        return room.getPuzzleById(puzzleId);
+    }
 
+    public boolean moveToNextRoom() {
+        if (!hasNextRoom()) {
+            return false;
+        }
+        enterRoom(currentRoomIndex + 1);
+        return activePuzzle != null;
+    }
+
+    public boolean hasNextRoom() {
+        return currentRoomIndex >= 0 && currentRoomIndex + 1 < availableRooms.size();
+    }
+
+    public String getCurrentRoomName() {
+        Room room = getCurrentRoom();
+        if (room == null || room.getName() == null || room.getName().isBlank()) {
+            return "Mystery Room";
+        }
+        return room.getName();
+    }
+
+    public void resetProgressToFirstRoom() {
+        if (currentPlayer == null) {
+            return;
+        }
+        if (availableRooms.isEmpty()) {
+            buildRoomsFor(currentPlayer);
+        }
+        for (Room room : availableRooms) {
+            for (Puzzle puzzle : room.getPuzzles()) {
+                puzzle.resetPuzzle();
+            }
+        }
+        enterRoom(0);
+        puzzleStartTime = null;
+    }
     public boolean submitPuzzleAnswer(int puzzleId, String answer) {
         Puzzle puzzle = getPuzzle(puzzleId);
         if (puzzle == null) {
@@ -302,19 +399,16 @@ public class PuzzlePalaceFacade {
 
     public void startEscapeRoom() {
         if (currentPlayer == null) {
+            availableRooms.clear();
             currentRoom = null;
             activePuzzle = null;
+            currentRoomIndex = -1;
             puzzleStartTime = null;
             lastCompletionSeconds = 0L;
             return;
         }
 
-        currentRoom = summarisePlayerRoom(currentPlayer);
-        if (currentRoom == null || currentRoom.getPuzzles().isEmpty()) {
-            activePuzzle = null;
-        } else {
-            activePuzzle = (MathChallengePuzzle) currentRoom.getPuzzles().get(0);
-        }
-        puzzleStartTime = null;
+        buildRoomsFor(currentPlayer);
+
     }
 }

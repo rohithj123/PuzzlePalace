@@ -17,6 +17,9 @@ import javafx.util.Duration;
 public class GameController {
 
     @FXML
+    private Label roomTitleLabel;
+
+    @FXML
     private Label puzzlePromptLabel;
 
     @FXML
@@ -56,11 +59,17 @@ public class GameController {
     private void loadPuzzle() {
         PuzzlePalaceFacade facade = App.getFacade();
         activePuzzle = facade.getActivePuzzle();
+        if (roomTitleLabel != null) {
+            roomTitleLabel.setText("Escape Room: " + facade.getCurrentRoomName());
+        }
         if (activePuzzle == null) {
             puzzlePromptLabel.setText("No puzzle available.");
             submitButton.setDisable(true);
             hintButton.setDisable(true);
             nextButton.setVisible(false); 
+            nextButton.setManaged(false);
+            nextButton.setDisable(true);
+
             stopTimer();
             updateTimerLabelWithSeconds(0);
             updateProgressSummary();
@@ -75,6 +84,8 @@ public class GameController {
         submitButton.setDisable(false);
         hintButton.setDisable(activePuzzle.getMaxHints() == 0);
         nextButton.setVisible(false); // hide by default
+        nextButton.setManaged(false);
+        nextButton.setDisable(true);
 
         if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
             displaySolvedState();
@@ -126,7 +137,11 @@ public class GameController {
         answerField.setDisable(true);
         submitButton.setDisable(true);
         hintButton.setDisable(true);
-        nextButton.setVisible(true); 
+        boolean hasNextRoom = App.getFacade().hasNextRoom();
+        nextButton.setVisible(hasNextRoom);
+        nextButton.setManaged(hasNextRoom);
+        nextButton.setDisable(!hasNextRoom);
+
         stopTimer();
         long lastSeconds = App.getFacade().getLastCompletionSeconds();
         updateTimerLabelWithSeconds(lastSeconds);
@@ -137,8 +152,11 @@ public class GameController {
     private void handleNextRoom() {
         PuzzlePalaceFacade facade = App.getFacade();
         stopTimer();
-        facade.enterRoom(0);
-        loadPuzzle();
+boolean advanced = facade.moveToNextRoom();
+        if (!advanced) {
+            feedbackLabel.setText("No more rooms to explore. Return to the dashboard to celebrate!");
+            return;
+        }        loadPuzzle();
     }
     private void startTimer() {
         stopTimer();

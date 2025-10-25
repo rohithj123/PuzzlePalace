@@ -69,6 +69,9 @@ public class GameController {
             nextButton.setVisible(false); 
             nextButton.setManaged(false);
             nextButton.setDisable(true);
+            nextButton.setText("Next Room");
+
+        
 
             stopTimer();
             updateTimerLabelWithSeconds(0);
@@ -138,6 +141,9 @@ public class GameController {
         submitButton.setDisable(true);
         hintButton.setDisable(true);
         boolean hasNextRoom = App.getFacade().hasNextRoom();
+        if (hasNextRoom && App.getFacade().isNextRoomFinal()) {
+            nextButton.setText("Final Room");
+        }
         nextButton.setVisible(hasNextRoom);
         nextButton.setManaged(hasNextRoom);
         nextButton.setDisable(!hasNextRoom);
@@ -152,11 +158,13 @@ public class GameController {
     private void handleNextRoom() {
         PuzzlePalaceFacade facade = App.getFacade();
         stopTimer();
-boolean advanced = facade.moveToNextRoom();
+        boolean advanced = facade.moveToNextRoom();
         if (!advanced) {
             feedbackLabel.setText("No more rooms to explore. Return to the dashboard to celebrate!");
             return;
-        }        loadPuzzle();
+        }
+        loadPuzzle();
+
     }
     private void startTimer() {
         stopTimer();

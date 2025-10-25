@@ -123,9 +123,26 @@ public class PuzzlePalaceFacade {
         wordRoom.setName("Word Puzzle Room");
         wordRoom.setDescription("Stacks of books hide a secret word.");
         wordRoom.addPuzzle(wordPuzzle);
+        SimplePuzzle logicPuzzle = new SimplePuzzle(
+            2003,
+            "The final vault presents three gemstone buttons: Ruby says 'Sapphire is the key,' " +
+                    "Sapphire insists 'I am not the key,' and Emerald claims 'Ruby is lying.' " +
+                    "Only one statement can be true. Which button will open the vault?",
+            "sapphire",
+            "Remember, exactly one of the statements is telling the truth.",
+            "Try assuming each gemstone is correct and see which assumption keeps only a single statement true."
+    );
+
+    Room logicRoom = new Room();
+    logicRoom.setRoomId("logic-vault");
+    logicRoom.setName("Logic Vault");
+    logicRoom.setDescription("Gemstone buttons challenge your reasoning.");
+    logicRoom.addPuzzle(logicPuzzle);
 
         availableRooms.add(mathRoom);
         availableRooms.add(wordRoom);
+        availableRooms.add(logicRoom);
+
 
         currentRoomIndex = 0;
         currentRoom = mathRoom;
@@ -309,6 +326,10 @@ public class PuzzlePalaceFacade {
 
     public boolean hasNextRoom() {
         return currentRoomIndex >= 0 && currentRoomIndex + 1 < availableRooms.size();
+    }
+
+    public boolean isNextRoomFinal() {
+        return hasNextRoom() && currentRoomIndex + 1 == availableRooms.size() - 1;
     }
 
     public String getCurrentRoomName() {

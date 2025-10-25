@@ -92,24 +92,56 @@ public class PuzzlePalaceFacade {
             return;
         }
 
+        List<Room> rooms = createRoomsForDifficulty(getSelectedDifficulty());
+        availableRooms.addAll(rooms);
+
+        if (!availableRooms.isEmpty()) {
+            currentRoomIndex = 0;
+            currentRoom = availableRooms.get(0);
+            activePuzzle = currentRoom.getPuzzles().isEmpty() ? null : currentRoom.getPuzzles().get(0);
+        }
+
+        Score score = player.getScoreDetails();
+        lastCompletionSeconds = score != null ? Math.max(0, score.getTimeTaken()) : 0;
+    }
+
+    private List<Room> createRoomsForDifficulty(Settings.Difficulty difficulty) {
+        if (difficulty == null) {
+            difficulty = Settings.Difficulty.EASY;
+        }
+        switch (difficulty) {
+            case MEDIUM:
+                return createMediumRooms();
+            case HARD:
+                return createHardRooms();
+            case EASY:
+            default:
+                return createEasyRooms();
+        }
+    }
 
 
-        MathChallengePuzzle puzzle = new MathChallengePuzzle(
-            2001,
-            "A glowing equation hovers over the vault: (12 + 8) / 4 + 3^2 = ?\n" +
-                    "Punch in the final number to power the escape hatch.",
-            14,
-            "Work from the inside out—parentheses first!",
-            "Remember that exponents come before addition.",
-            "After dividing by four, you still need to add the value of 3²."
+    private List<Room> createEasyRooms() {
+        List<Room> rooms = new ArrayList<>();
+        Settings.Difficulty difficulty = Settings.Difficulty.EASY;
+
+        MathChallengePuzzle mathPuzzle = new MathChallengePuzzle(
+                2001,
+                "A glowing equation hovers over the vault: (12 + 8) / 4 + 3^2 = ?\n" +
+                        "Punch in the final number to power the escape hatch.",
+                14,
+                "Work from the inside out—parentheses first!",
+                "Remember that exponents come before addition.",
+                "After dividing by four, you still need to add the value of 3²."
         );
 
         Room mathRoom = new Room();
         mathRoom.setRoomId("math-gate");
         mathRoom.setName("Math Gate");
         mathRoom.setDescription("A glowing equation blocks the exit.");
-        mathRoom.addPuzzle(puzzle);
-
+        mathRoom.setDifficulty(difficulty.getDisplayName());
+        mathRoom.setEstimatedTimeMinutes(5);
+        mathRoom.addPuzzle(mathPuzzle);
         SimplePuzzle wordPuzzle = new SimplePuzzle(
                 2002,
                 "Shelves whisper riddles: unscramble the letters T L G H I to reveal the password.",
@@ -122,7 +154,10 @@ public class PuzzlePalaceFacade {
         wordRoom.setRoomId("word-puzzle");
         wordRoom.setName("Word Puzzle Room");
         wordRoom.setDescription("Stacks of books hide a secret word.");
+        wordRoom.setDifficulty(difficulty.getDisplayName());
+        wordRoom.setEstimatedTimeMinutes(5);
         wordRoom.addPuzzle(wordPuzzle);
+
         SimplePuzzle logicPuzzle = new SimplePuzzle(
             2003,
             "The final vault presents three gemstone buttons: Ruby says 'Sapphire is the key,' " +
@@ -132,25 +167,152 @@ public class PuzzlePalaceFacade {
             "Remember, exactly one of the statements is telling the truth.",
             "Try assuming each gemstone is correct and see which assumption keeps only a single statement true."
     );
-
+    
     Room logicRoom = new Room();
     logicRoom.setRoomId("logic-vault");
     logicRoom.setName("Logic Vault");
     logicRoom.setDescription("Gemstone buttons challenge your reasoning.");
+    logicRoom.setDifficulty(difficulty.getDisplayName());
+    logicRoom.setEstimatedTimeMinutes(5);
     logicRoom.addPuzzle(logicPuzzle);
 
-        availableRooms.add(mathRoom);
-        availableRooms.add(wordRoom);
-        availableRooms.add(logicRoom);
+    rooms.add(mathRoom);
+    rooms.add(wordRoom);
+    rooms.add(logicRoom);
+    return rooms;
+}
 
+private List<Room> createMediumRooms() {
+    List<Room> rooms = new ArrayList<>();
+    Settings.Difficulty difficulty = Settings.Difficulty.MEDIUM;
 
-        currentRoomIndex = 0;
-        currentRoom = mathRoom;
-        activePuzzle = puzzle;
-        
+    MathChallengePuzzle mathPuzzle = new MathChallengePuzzle(
+            2101,
+            "Runed gears align to display: (18 / 3) + 4 × (5 - 1) = ?\n" +
+                    "Set the mechanism to the correct number to advance.",
+            22,
+            "Pay attention to the operations inside the parentheses first.",
+            "After dividing eighteen by three, tackle the multiplication.",
+            "Your final step subtracts nothing—add the two partial results together."
+    );
 
-        Score score = player.getScoreDetails();
-        lastCompletionSeconds = score != null ? Math.max(0, score.getTimeTaken()) : 0;
+    Room mathRoom = new Room();
+    mathRoom.setRoomId("math-gears");
+    mathRoom.setName("Clockwork Calculations");
+    mathRoom.setDescription("Intricate gears demand a precise calculation.");
+    mathRoom.setDifficulty(difficulty.getDisplayName());
+    mathRoom.setEstimatedTimeMinutes(7);
+    mathRoom.addPuzzle(mathPuzzle);
+
+    SimplePuzzle wordPuzzle = new SimplePuzzle(
+            2102,
+            "Carved runes glow softly: Arrange the letters P E A R L S to reveal the password whispered by the mages.",
+            "pearls",
+            "Think of treasure formed within a humble shell.",
+            "The solution is plural and glimmers brightly.",
+            "These treasures are often strung together as jewelry."
+    );
+
+    Room wordRoom = new Room();
+    wordRoom.setRoomId("word-runes");
+    wordRoom.setName("Rune Library");
+    wordRoom.setDescription("Ancient runes hide a shimmering word.");
+    wordRoom.setDifficulty(difficulty.getDisplayName());
+    wordRoom.setEstimatedTimeMinutes(7);
+    wordRoom.addPuzzle(wordPuzzle);
+
+    SimplePuzzle logicPuzzle = new SimplePuzzle(
+            2103,
+            "Three clockwork gears are labeled A, B, and C. A claims 'B's statement is false.' " +
+                    "B insists 'C is the key.' C declares 'B is lying.' Exactly one statement is true. " +
+                    "Which gear unlocks the door? (Answer with A, B, or C)",
+            "C",
+            "If B were correct, what would that mean for the others?",
+            "Try assuming each gear is the key and count how many statements stay true.",
+            "Only one statement can be true—find the assumption that makes that possible."
+    );
+
+    Room logicRoom = new Room();
+    logicRoom.setRoomId("logic-gears");
+    logicRoom.setName("Gearwork Logic");
+    logicRoom.setDescription("Synchronised gears debate which one is vital.");
+    logicRoom.setDifficulty(difficulty.getDisplayName());
+    logicRoom.setEstimatedTimeMinutes(7);
+    logicRoom.addPuzzle(logicPuzzle);
+
+    rooms.add(mathRoom);
+    rooms.add(wordRoom);
+    rooms.add(logicRoom);
+    return rooms;
+}
+
+private List<Room> createHardRooms() {
+    List<Room> rooms = new ArrayList<>();
+    Settings.Difficulty difficulty = Settings.Difficulty.HARD;
+
+    MathChallengePuzzle mathPuzzle = new MathChallengePuzzle(
+            2201,
+            "A crystalline equation pulses: ((4^3) + 6 × 5 - 18) / 2 = ?\n" +
+                    "Only the correct final value will stabilise the portal.",
+            38,
+            "Resolve the exponent before anything else.",
+            "Handle the multiplication and subtraction before dividing.",
+            "Once the numerator is ready, divide by two to finish."
+    );
+
+    Room mathRoom = new Room();
+    mathRoom.setRoomId("math-portal");
+    mathRoom.setName("Arcane Calculus");
+    mathRoom.setDescription("Mystic numbers swirl around a crystal portal.");
+    mathRoom.setDifficulty(difficulty.getDisplayName());
+    mathRoom.setEstimatedTimeMinutes(9);
+    mathRoom.addPuzzle(mathPuzzle);
+
+    SimplePuzzle wordPuzzle = new SimplePuzzle(
+            2202,
+            "A riddle is etched into the lock:\n" +
+                    "Sentinels guard the ancient vault.\n" +
+                    "Allies answer every call.\n" +
+                    "Fables unlock hidden truths.\n" +
+                    "Enter the word they form.",
+            "safe",
+            "Focus on the first letters of each line.",
+            "Those letters combine to form a single, familiar word.",
+            "It's exactly what the vault wants to be.");
+
+    Room wordRoom = new Room();
+    wordRoom.setRoomId("word-vault");
+    wordRoom.setName("Vault of Verses");
+    wordRoom.setDescription("Poetic wards conceal the password.");
+    wordRoom.setDifficulty(difficulty.getDisplayName());
+    wordRoom.setEstimatedTimeMinutes(9);
+    wordRoom.addPuzzle(wordPuzzle);
+
+    SimplePuzzle logicPuzzle = new SimplePuzzle(
+            2203,
+            "Three enchanted switches A, B, and C guard the final chamber. Exactly two of the following statements are true:\n" +
+                    "A: 'Switch B will not open the door.'\n" +
+                    "B: 'Switch C unlocks the door.'\n" +
+                    "C: 'Switch A is lying.'\n" +
+                    "Which switch actually opens the door? (Answer with A, B, or C)",
+            "C",
+            "Assume each switch opens the door in turn and test the statements.",
+            "Remember that exactly two statements must be true at the same time.",
+            "Only one assumption satisfies the requirement—identify which switch makes it work."
+    );
+
+    Room logicRoom = new Room();
+    logicRoom.setRoomId("logic-wardens");
+    logicRoom.setName("Wardens' Final Test");
+    logicRoom.setDescription("Sentient switches argue about the truth.");
+    logicRoom.setDifficulty(difficulty.getDisplayName());
+    logicRoom.setEstimatedTimeMinutes(10);
+    logicRoom.addPuzzle(logicPuzzle);
+
+    rooms.add(mathRoom);
+    rooms.add(wordRoom);
+    rooms.add(logicRoom);
+    return rooms;
     }
 
     public void logout() {
@@ -215,6 +377,31 @@ public class PuzzlePalaceFacade {
     }
 
     public void setDifficulty(String level) {
+
+        setSelectedDifficulty(Settings.Difficulty.fromName(level));
+    }
+
+    public Settings.Difficulty getSelectedDifficulty() {
+        if (settings == null) {
+            settings = new Settings();
+        }
+        Settings.Difficulty difficulty = settings.getDifficulty();
+        return difficulty == null ? Settings.Difficulty.EASY : difficulty;
+    }
+
+    public void setSelectedDifficulty(Settings.Difficulty difficulty) {
+        if (settings == null) {
+            settings = new Settings();
+        }
+        Settings.Difficulty resolved = difficulty == null ? Settings.Difficulty.EASY : difficulty;
+        if (resolved == settings.getDifficulty()) {
+            return;
+        }
+        settings.setDifficulty(resolved);
+        if (currentPlayer != null) {
+            buildRoomsFor(currentPlayer);
+        }
+
     }
 
     public void enterRoom(int roomIndex) {
@@ -286,16 +473,18 @@ public class PuzzlePalaceFacade {
     public String describeCurrentPuzzleStatus() {
         Puzzle puzzle = getActivePuzzle();
         if (puzzle == null) {
-            return "No puzzle loaded.";
+            return "Difficulty: " + getSelectedDifficulty().getDisplayName() + ". No puzzle loaded.";
         }
         String status = puzzle.getStatus();
+        String prefix = "Difficulty: " + getSelectedDifficulty().getDisplayName() + ". ";
+
         if ("SOLVED".equalsIgnoreCase(status)) {
-            return "You cracked the training puzzle!";
+            return prefix + "You cracked the current puzzle!";
         }
         if ("ATTEMPTED".equalsIgnoreCase(status)) {
-            return "The keypad is still locked. Try another code.";
+            return prefix + "The keypad is still locked. Try another code.";
         }
-        return "A puzzle is waiting for you.";
+        return prefix + "A puzzle is waiting for you.";
     }
 
     public List<Room> listAvailableRooms() {

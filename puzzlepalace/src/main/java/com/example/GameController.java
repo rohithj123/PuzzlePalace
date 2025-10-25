@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import com.model.Puzzle;
 import com.model.PuzzlePalaceFacade;
+import com.model.Settings;
+
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -60,7 +62,11 @@ public class GameController {
         PuzzlePalaceFacade facade = App.getFacade();
         activePuzzle = facade.getActivePuzzle();
         if (roomTitleLabel != null) {
-            roomTitleLabel.setText("Escape Room: " + facade.getCurrentRoomName());
+            Settings.Difficulty difficulty = facade.getSelectedDifficulty();
+            String label = String.format("%s Challenge – %s",
+                    difficulty.getDisplayName(),
+                    facade.getCurrentRoomName());
+            roomTitleLabel.setText(label);    
         }
         if (activePuzzle == null) {
             puzzlePromptLabel.setText("No puzzle available.");

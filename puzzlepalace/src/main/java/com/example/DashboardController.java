@@ -5,8 +5,11 @@ import java.io.IOException;
 import com.model.Player;
 import com.model.PuzzlePalaceFacade;
 import com.model.Score;
+import com.model.Settings;
+
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 
 public class DashboardController {
@@ -32,15 +35,27 @@ public class DashboardController {
 
     @FXML
     private Label puzzleStatusLabel;
+    @FXML
+    private ChoiceBox<Settings.Difficulty> difficultyChoiceBox;
+
+    @FXML
+    private Label difficultyDescriptionLabel;
+
 
     @FXML
     private void initialize() {
+        configureDifficultySelector();
+
         refreshPlayerDetails();
     }
 
     @FXML
     private void handleLogout() {
         PuzzlePalaceFacade facade = App.getFacade();
+        Settings.Difficulty selected = difficultyChoiceBox != null
+        ? difficultyChoiceBox.getSelectionModel().getSelectedItem()
+        : Settings.Difficulty.EASY;
+facade.setSelectedDifficulty(selected);
         facade.logout();
         try {
             App.getFacade().startEscapeRoom();
@@ -62,6 +77,10 @@ public class DashboardController {
     private void handleStartPuzzle() {
         try {
             PuzzlePalaceFacade facade = App.getFacade();
+            Settings.Difficulty selected = difficultyChoiceBox != null
+            ? difficultyChoiceBox.getSelectionModel().getSelectedItem()
+            : Settings.Difficulty.EASY;
+    facade.setSelectedDifficulty(selected);
             facade.resetProgressToFirstRoom();
             App.setRoot("game");
         } catch (IOException e) {
@@ -102,19 +121,56 @@ public class DashboardController {
         if (puzzleStatusLabel != null) {
             puzzleStatusLabel.setText(facade.describeCurrentPuzzleStatus());
         }
+        if (difficultyChoiceBox != null) {
+            Settings.Difficulty difficulty = facade.getSelectedDifficulty();
+            difficultyChoiceBox.getSelectionModel().select(difficulty);
+            updateDifficultyDescription(difficulty);
+        }
+    }
+    private String formatTime(int seconds) {
+        if (seconds <= 0) {
+            return "--";
+        }
+        int mins = seconds / 60;
+        int secs = seconds % 60;
+        if (mins <= 0) {
+            return secs + "s";
+        }
+        return mins + "m " + String.format("%02ds", secs);
     }
     
-
-
-private String formatTime(int seconds) {
-    if (seconds <= 0) {
-        return "--";
+    private void configureDifficultySelector() {
+        if (difficultyChoiceBox == null) {
+            return;
+        }
+        difficultyChoiceBox.getItems().setAll(Settings.Difficulty.values());
+        Settings.Difficulty current = App.getFacade().getSelectedDifficulty();
+        difficultyChoiceBox.getSelectionModel().select(current);
+        updateDifficultyDescription(current);
+        difficultyChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            Settings.Difficulty resolved = newVal == null ? Settings.Difficulty.EASY : newVal;
+            updateDifficultyDescription(resolved);
+        });
     }
-    int mins = seconds / 60;
-    int secs = seconds % 60;
-    if (mins <= 0) {
-        return secs + "s";
+    private void updateDifficultyDescription(Settings.Difficulty difficulty) {
+        if (difficultyDescriptionLabel == null) {
+            return;
+        }
+        Settings.Difficulty resolved = difficulty == null ? Settings.Difficulty.EASY : difficulty;
+        String text;
+        switch (resolved) {
+            case MEDIUM:
+                text = "A balanced challenge with multi-step clues and trickier riddles.";
+                break;
+            case HARD:
+                text = "Designed for veterans: layered puzzles that demand careful reasoning.";
+                break;
+            case EASY:
+            default:
+                text = "Great for warming up—straightforward puzzles with generous hints.";
+                break;
+        }
+        difficultyDescriptionLabel.setText(text);
     }
-    return mins + "m " + String.format("%02ds", secs);
-}
+    
 }

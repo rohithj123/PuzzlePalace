@@ -112,7 +112,7 @@ public class PuzzlePalaceFacade {
 
         SimplePuzzle wordPuzzle = new SimplePuzzle(
                 2002,
-                "Shelves whisper riddles: unscramble the letters L I G H T to reveal the password.",
+                "Shelves whisper riddles: unscramble the letters T L G H I to reveal the password.",
                 "light",
                 "Think about what helps you see in the dark.",
                 "The answer is something that shines brightly."

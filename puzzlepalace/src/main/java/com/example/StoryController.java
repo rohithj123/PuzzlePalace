@@ -17,6 +17,8 @@ public class StoryController {
     @FXML
     private TextArea storyTextArea;
 
+    private Thread speechThread;
+
     @FXML
     private void initialize() {
         if (errorLabel != null) {
@@ -27,18 +29,22 @@ public class StoryController {
             if (storyTextArea != null) {
                 String storyText = storyTextArea.getText();
                 if (storyText != null && !storyText.isBlank()) {
-                    Thread speechThread = new Thread(() -> Speak.speak(storyText));
+                    speechThread = new Thread(() -> Speak.speak(storyText));
                     speechThread.setDaemon(true);
                     speechThread.start();
                 }
             }
         });
-    } // Closing brace for initialize method
+    }
 
     @FXML
     private void handleNext() {
         if (errorLabel != null) {
             errorLabel.setText("");
+        }
+        Speak.stop();
+        if (speechThread != null && speechThread.isAlive()) {
+            speechThread.interrupt();
         }
         try {
             App.setRoot("dashboard");

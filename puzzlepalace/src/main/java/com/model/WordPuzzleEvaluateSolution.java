@@ -2,8 +2,20 @@ package com.model;
 
 import java.util.List;
 
+/**
+ * Handles checking answers for word puzzles.
+ * Compares user answers with correct answers and gives feedback.
+ */
 public class WordPuzzleEvaluateSolution 
 {
+/**
+     * Checks if the user's answer matches the correct one.
+     *
+     * @param userAnswer the answer the user gave
+     * @param correctAnswer the correct word
+     * @param wordList list of valid words for this puzzle
+     * @return message saying if it's correct or not
+     */
 
     public String evaluateSolution(String userAnswer, String correctAnswer, List<String> wordList) {
         if (userAnswer == null || userAnswer.isBlank()) 
@@ -34,6 +46,14 @@ public class WordPuzzleEvaluateSolution
 
         return "Incorrect answer. The correct word was \"" + expected + "\".";
     }
+
+    /**
+     * Checks an answer using a puzzle object.
+     *
+     * @param puzzle the puzzle to check
+     * @param userAnswer the player's answer
+     * @return message saying if it's correct or not
+     */
 
     public String evaluateSolution(WordPuzzle puzzle, String userAnswer) 
     {

@@ -2,6 +2,7 @@ package com.example;
 
 import java.io.IOException;
 
+import com.model.HintRequestResult;
 import com.model.Player;
 import com.model.Puzzle;
 import com.model.PuzzlePalaceFacade;
@@ -50,6 +51,9 @@ public class GameController {
 
     @FXML
     private Button nextButton;
+
+    @FXML
+    private Button freeClueButton;
 
     @FXML
     private VBox certificateBox;
@@ -113,6 +117,7 @@ public class GameController {
             if (!facade.hasNextRoom()) {
                 showCertificate();
             }
+            updateFreeClueButton();
             return;
         }
 
@@ -126,6 +131,8 @@ public class GameController {
         nextButton.setVisible(false); // hide by default
         nextButton.setManaged(false);
         nextButton.setDisable(true);
+
+        updateFreeClueButton();
 
         if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
             displaySolvedState();
@@ -149,9 +156,11 @@ public class GameController {
                 message.append("\nYou earned a free clue token for solving without hints!");
             }
             feedbackLabel.setText(message.toString());
+            displaySolvedState();
         } else {
             feedbackLabel.setText("That's not quite right. Try another combination.");
         }
+        updateFreeClueButton();
     }
 
     @FXML
@@ -164,6 +173,50 @@ public class GameController {
         if (activePuzzle.getHintsUsed() >= activePuzzle.getMaxHints()) {
             hintButton.setDisable(true);
         }
+        updateFreeClueButton();
+    }
+
+    @FXML
+    private void handleUseFreeClueToken() {
+        if (activePuzzle == null) {
+            return;
+        }
+        PuzzlePalaceFacade facade = App.getFacade();
+        if (facade == null) {
+            if (feedbackLabel != null) {
+                feedbackLabel.setText("Unable to use a free clue token right now.");
+            }
+            return;
+        }
+        HintRequestResult result = facade.useFreeHintToken(activePuzzle.getPuzzleId());
+        if (result == null) {
+            if (feedbackLabel != null) {
+                feedbackLabel.setText("Unable to use a free clue token right now.");
+            }
+            updateFreeClueButton();
+            return;
+        }
+        if (result.isSuccess()) {
+            if (feedbackLabel != null) {
+                feedbackLabel.setText("Free clue token redeemed!");
+            }
+            if (hintLabel != null) {
+                String hintText = result.getMessage();
+                hintLabel.setText(hintText == null || hintText.isBlank() ? "No hint available." : hintText);
+            }
+        } else {
+            String message = result.getMessage();
+            if (message == null || message.isBlank()) {
+                message = "No free clue token available.";
+            }
+            if (feedbackLabel != null) {
+                feedbackLabel.setText(message);
+            }
+        }
+        if (hintButton != null && activePuzzle.getHintsUsed() >= activePuzzle.getMaxHints()) {
+            hintButton.setDisable(true);
+        }
+        updateFreeClueButton();
     }
 
     @FXML
@@ -197,6 +250,7 @@ public class GameController {
         } else {
             hideCertificate();
         }
+        updateFreeClueButton();
 
     }
 
@@ -350,6 +404,29 @@ public class GameController {
             }
         }
         return total;
+    }
+        private void updateFreeClueButton() {
+            if (freeClueButton == null) {
+                return;
+            }
+            PuzzlePalaceFacade facade = App.getFacade();
+            boolean show = facade != null
+                    && activePuzzle != null
+                    && !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus())
+                    && facade.hasFreeHintToken()
+                    && activePuzzle.getHintsUsed() < activePuzzle.getMaxHints();
+            freeClueButton.setVisible(show);
+            freeClueButton.setManaged(show);
+            if (!show) {
+                freeClueButton.setText("Use Free Clue Token");
+                return;
+            }
+            int tokens = Math.max(0, facade.getFreeHintTokenCount());
+            if (tokens > 1) {
+                freeClueButton.setText(String.format("Use Free Clue Token (%d)", tokens));
+            } else {
+                freeClueButton.setText("Use Free Clue Token");
+            }
     }
 
     private int resolveDifficultyMultiplier(Settings.Difficulty difficulty) {

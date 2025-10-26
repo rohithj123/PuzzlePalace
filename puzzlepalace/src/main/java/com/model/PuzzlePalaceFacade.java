@@ -894,6 +894,9 @@ return rooms;
                 newlySolved = currentPlayer.recordPuzzleCompletion(puzzle, answer);
                 if (newlySolved) {
                     currentPlayer.awardBonusPoints(100);
+                    if (puzzle != null && puzzle.getHintsUsed() == 0) {
+                        currentPlayer.addFreeHintToken();
+                    }
                 }
             }
             if (puzzleStartTime != null) {
@@ -943,8 +946,50 @@ return rooms;
         if (currentPlayer != null) {
             currentPlayer.recordHintUsed(puzzle, hint);  
         }
-        return hint;    
+        return hint;
     }
+
+    public boolean hasFreeHintToken() {
+        return currentPlayer != null && currentPlayer.hasFreeHintTokens();
+    }
+
+    public int getFreeHintTokenCount() {
+        return currentPlayer == null ? 0 : currentPlayer.getFreeHintTokenCount();
+    }
+
+    public HintRequestResult useFreeHintToken(int puzzleId) {
+        if (currentPlayer == null) {
+            return new HintRequestResult(false, "No player logged in.", false);
+        }
+        if (!currentPlayer.consumeFreeHintToken()) {
+            return new HintRequestResult(false, "No free clue tokens available.", false);
+        }
+        Puzzle puzzle = getPuzzle(puzzleId);
+        if (puzzle == null) {
+            currentPlayer.addFreeHintToken();
+            return new HintRequestResult(false, "No puzzle loaded.", false);
+        }
+        String hint = puzzle.requestHint();
+        if (hint == null || hint.isBlank()) {
+            currentPlayer.addFreeHintToken();
+            return new HintRequestResult(false, "No hints available.", false);
+        }
+        if (isHintUnavailableMessage(hint)) {
+            currentPlayer.addFreeHintToken();
+            return new HintRequestResult(false, hint, false);
+        }
+        puzzle.markLastHintFree();
+        currentPlayer.recordHintUsed(puzzle, hint);
+        return new HintRequestResult(true, hint, true);
+    }
+
+    private boolean isHintUnavailableMessage(String hintMessage) {
+        if (hintMessage == null) {
+            return true;
+        }
+        String normalized = hintMessage.trim();
+        return normalized.equalsIgnoreCase("No hints available.")
+                || normalized.equalsIgnoreCase("All hints have been used.");    }
 
     public PlayerProgressReport getCurrentPlayerProgressReport() {
         if (currentPlayer == null) {

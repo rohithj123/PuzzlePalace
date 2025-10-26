@@ -270,6 +270,35 @@ public class Player {
         int clamped = total > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) total;
         score.setPoints(clamped);
     }
+    public void addFreeHintToken() {
+        if (score == null) {
+            return;
+        }
+        int current = score.getFreeHintTokens();
+        if (current < Integer.MAX_VALUE) {
+            score.setFreeHintTokens(current + 1);
+        }
+    }
+
+    public boolean hasFreeHintTokens() {
+        return score != null && score.getFreeHintTokens() > 0;
+    }
+
+    public boolean consumeFreeHintToken() {
+        if (score == null) {
+            return false;
+        }
+        int current = score.getFreeHintTokens();
+        if (current <= 0) {
+            return false;
+        }
+        score.setFreeHintTokens(current - 1);
+        return true;
+    }
+
+    public int getFreeHintTokenCount() {
+        return score == null ? 0 : Math.max(0, score.getFreeHintTokens());
+    }
 
     public void recordTimeSpent(int seconds) {
         if (seconds <= 0) {

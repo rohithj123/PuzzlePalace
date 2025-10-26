@@ -23,6 +23,7 @@
                         <Label text="Welcome to PuzzlePalace" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
 
                         <TextArea
+                            fx:id="storyTextArea"
                             editable="false"
                             wrapText="true"
                             focusTraversable="false"
@@ -34,8 +35,7 @@ Candles flickered to life. Strange mechanisms began to hum. And a voice whispere
 “Welcome, traveler. Let’s see if your mind is sharp enough to escape.”
 Now, you’re trapped alone. Every room you enter locks behind you. Each one hides puzzles, riddles, and secrets designed to test your knowledge and courage. The palace shifts as you move, rearranging itself like a living maze.
 You must think fast, observe carefully, and solve the puzzles to unlock the doors that lead deeper inside. The final chamber holds the exit… or perhaps, your fate.
-There are hints, but no allies. Only your wits and the will to escape the PuzzlePalace before it becomes your tomb.">
-                        </TextArea>
+There are hints, but no allies. Only your wits and the will to escape the PuzzlePalace before it becomes your tomb."/>
                     </children>
                 </VBox>
             </content>

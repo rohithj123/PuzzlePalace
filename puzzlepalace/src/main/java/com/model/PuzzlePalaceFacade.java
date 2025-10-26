@@ -15,6 +15,7 @@ import java.util.Random;
 
 public class PuzzlePalaceFacade {
 
+    private static final int FREEZE_TIMER_DURATION_SECONDS = 10;
     private Player currentPlayer;
     private Progress progress;
     private Leaderboard leaderboard;
@@ -28,7 +29,11 @@ public class PuzzlePalaceFacade {
     private final List<Room> availableRooms;
     private int currentRoomIndex;
     private final Random random = new Random();
-
+    private int consecutiveHintFreeSolves;
+    private boolean freezeTimerActive;
+    private Instant freezeEndTime;
+    private long freezeStartElapsedSeconds;
+    private long freezeCompensationSeconds;
 
     public PuzzlePalaceFacade() {
         this("json/users.json");
@@ -94,6 +99,8 @@ public class PuzzlePalaceFacade {
         activePuzzle = null;
         currentRoomIndex = -1;
         puzzleStartTime = null;
+        resetFreezeState();
+        consecutiveHintFreeSolves = 0;
 
         if (player == null) {
             lastCompletionSeconds = 0L;
@@ -820,6 +827,7 @@ public class PuzzlePalaceFacade {
         currentRoom = availableRooms.get(roomIndex);
         activePuzzle = currentRoom.getPuzzles().isEmpty() ? null : currentRoom.getPuzzles().get(0);
         puzzleStartTime = null;
+        resetFreezeState();
     }
 
     public Room getCurrentRoom() {
@@ -854,6 +862,7 @@ public class PuzzlePalaceFacade {
     }
 
     public void restartActivePuzzleTimer() {
+        resetFreezeState();
         if (activePuzzle == null) {
             puzzleStartTime = null;
             return;
@@ -869,8 +878,17 @@ public class PuzzlePalaceFacade {
         if (puzzleStartTime == null) {
             return 0L;
         }
-        return Math.max(0L, Duration.between(puzzleStartTime, Instant.now()).getSeconds());
-    }
+        Instant now = Instant.now();
+        long rawElapsed = Math.max(0L, Duration.between(puzzleStartTime, now).getSeconds());
+        if (freezeTimerActive && freezeEndTime != null) {
+            if (now.isBefore(freezeEndTime)) {
+                return Math.max(0L, freezeStartElapsedSeconds);
+            }
+            freezeTimerActive = false;
+            freezeEndTime = null;
+        }
+        long adjusted = rawElapsed - freezeCompensationSeconds;
+        return Math.max(0L, adjusted);    }
 
     public long getLastCompletionSeconds() {
         return Math.max(0L, lastCompletionSeconds);
@@ -951,6 +969,8 @@ public class PuzzlePalaceFacade {
         }
         enterRoom(0);
         puzzleStartTime = null;
+        resetFreezeState();
+        consecutiveHintFreeSolves = 0;
     }
     public boolean submitPuzzleAnswer(int puzzleId, String answer) {
         Puzzle puzzle = getPuzzle(puzzleId);
@@ -967,18 +987,28 @@ public class PuzzlePalaceFacade {
                     currentPlayer.awardBonusPoints(100);
                     if (puzzle != null && puzzle.getHintsUsed() == 0) {
                         currentPlayer.addFreeHintToken();
+                        consecutiveHintFreeSolves++;
+                        if (consecutiveHintFreeSolves >= 2) {
+                            currentPlayer.addFreezeTimerCharge();
+                            consecutiveHintFreeSolves = 0;
+                        }
+                    } else {
+                        consecutiveHintFreeSolves = 0;
                     }
                 }
             }
-            if (puzzleStartTime != null) {
-                lastCompletionSeconds = Math.max(0L, Duration.between(puzzleStartTime, Instant.now()).getSeconds());
-            }
+            long completionSeconds = getActivePuzzleElapsedSeconds();
+            lastCompletionSeconds = Math.max(0L, completionSeconds);
             Score score = currentPlayer != null ? currentPlayer.getScoreDetails() : null;
             if (score != null) {
                 int seconds = (int) Math.min(Integer.MAX_VALUE, Math.max(0L, lastCompletionSeconds));
                 score.setTimeTaken(seconds);
             }
             puzzleStartTime = null;
+            resetFreezeState();
+        }
+        if (solved && (puzzle == null || puzzle.getHintsUsed() != 0)) {
+            consecutiveHintFreeSolves = 0;
         }
         return solved;    }
 
@@ -1054,6 +1084,71 @@ public class PuzzlePalaceFacade {
         return new HintRequestResult(true, hint, true);
     }
 
+    public boolean hasFreezeTimerCharge() {
+        return currentPlayer != null && currentPlayer.hasFreezeTimerCharges();
+    }
+
+    public int getFreezeTimerChargeCount() {
+        return currentPlayer == null ? 0 : Math.max(0, currentPlayer.getFreezeTimerCharges());
+    }
+
+    public boolean isFreezeTimerActive() {
+        if (!freezeTimerActive || freezeEndTime == null) {
+            return false;
+        }
+        if (Instant.now().isBefore(freezeEndTime)) {
+            return true;
+        }
+        freezeTimerActive = false;
+        freezeEndTime = null;
+        return false;
+    }
+
+    public boolean isOnFinalPuzzle() {
+        if (activePuzzle == null || "SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
+            return false;
+        }
+        if (availableRooms.isEmpty()) {
+            return false;
+        }
+        return !hasNextRoom() && currentRoomIndex >= 0 && currentRoomIndex < availableRooms.size();
+    }
+
+    public boolean canUseFreezeTimerItem() {
+        if (!isOnFinalPuzzle()) {
+            return false;
+        }
+        if (currentPlayer == null || !currentPlayer.hasFreezeTimerCharges()) {
+            return false;
+        }
+        if (isFreezeTimerActive()) {
+            return false;
+        }
+        ensureActivePuzzleTimerStarted();
+        return puzzleStartTime != null;
+    }
+
+    public boolean activateFreezeTimer() {
+        if (!canUseFreezeTimerItem()) {
+            return false;
+        }
+        ensureActivePuzzleTimerStarted();
+        if (puzzleStartTime == null) {
+            return false;
+        }
+        if (!currentPlayer.consumeFreezeTimerCharge()) {
+            return false;
+        }
+        Instant now = Instant.now();
+        long rawElapsed = Math.max(0L, Duration.between(puzzleStartTime, now).getSeconds());
+        long currentElapsed = Math.max(0L, rawElapsed - freezeCompensationSeconds);
+        freezeStartElapsedSeconds = currentElapsed;
+        freezeTimerActive = true;
+        freezeEndTime = now.plusSeconds(FREEZE_TIMER_DURATION_SECONDS);
+        freezeCompensationSeconds += FREEZE_TIMER_DURATION_SECONDS;
+        return true;
+    }
+
     private boolean isHintUnavailableMessage(String hintMessage) {
         if (hintMessage == null) {
             return true;
@@ -1112,10 +1207,18 @@ public class PuzzlePalaceFacade {
             currentRoomIndex = -1;
             puzzleStartTime = null;
             lastCompletionSeconds = 0L;
+            resetFreezeState();
+            consecutiveHintFreeSolves = 0;
             return;
         }
 
         buildRoomsFor(currentPlayer);
 
+    }
+    private void resetFreezeState() {
+        freezeTimerActive = false;
+        freezeEndTime = null;
+        freezeStartElapsedSeconds = 0L;
+        freezeCompensationSeconds = 0L;
     }
 }

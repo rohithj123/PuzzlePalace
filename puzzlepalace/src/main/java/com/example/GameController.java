@@ -58,6 +58,9 @@ public class GameController {
     private Button extraHintButton;
 
     @FXML
+    private Button freezeTimerButton;
+
+    @FXML
     private VBox certificateBox;
 
     @FXML
@@ -120,6 +123,7 @@ public class GameController {
                 showCertificate();
             }
             updateExtraHintButton();
+            updateFreezeTimerButton();
             return;
         }
 
@@ -135,6 +139,7 @@ public class GameController {
         nextButton.setDisable(true);
 
         updateExtraHintButton();
+        updateFreezeTimerButton();
 
         if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
             displaySolvedState();
@@ -163,6 +168,7 @@ public class GameController {
             feedbackLabel.setText("That's not quite right. Try another combination.");
         }
         updateExtraHintButton();
+        updateFreezeTimerButton();
     }
 
     @FXML
@@ -183,6 +189,7 @@ public class GameController {
             hintButton.setDisable(true);
         }
         updateExtraHintButton();
+        updateFreezeTimerButton();
     }
 
     @FXML
@@ -203,6 +210,7 @@ public class GameController {
                 feedbackLabel.setText("Unable to use an extra hint right now.");
             }
             updateExtraHintButton();
+            updateFreezeTimerButton();
             return;
         }
         if (result.isSuccess()) {
@@ -226,6 +234,7 @@ public class GameController {
             hintButton.setDisable(true);
         }
         updateExtraHintButton();
+        updateFreezeTimerButton();
     }
 
     @FXML
@@ -260,6 +269,7 @@ public class GameController {
             hideCertificate();
         }
         updateExtraHintButton();
+        updateFreezeTimerButton();
 
     }
 
@@ -271,17 +281,41 @@ public class GameController {
         if (!advanced) {
             feedbackLabel.setText("No more rooms to explore. Return to the dashboard to celebrate!");
             showCertificate();
+            updateFreezeTimerButton();
 
             return;
         }
         loadPuzzle();
+        updateFreezeTimerButton();
 
     }
+
+    @FXML
+    private void handleFreezeTimer() {
+        PuzzlePalaceFacade facade = App.getFacade();
+        if (facade == null) {
+            return;
+        }
+        boolean activated = facade.activateFreezeTimer();
+        if (activated) {
+            if (feedbackLabel != null) {
+                feedbackLabel.setText("Timer frozen for 10 seconds! Stay focused on the final puzzle.");
+            }
+        } else {
+            if (feedbackLabel != null) {
+                feedbackLabel.setText("Unable to freeze the timer right now.");
+            }
+        }
+        updateFreezeTimerButton();
+    }
+
     private void startTimer() {
         stopTimer();
         updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds());
-        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds())));
+        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds());
+            updateFreezeTimerButton();
+        }));
         timerTimeline.setCycleCount(Timeline.INDEFINITE);
         timerTimeline.play();
     }
@@ -294,8 +328,10 @@ public class GameController {
         } else {
             updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds());
         }
-        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds())));
+        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            updateTimerLabelWithSeconds(App.getFacade().getActivePuzzleElapsedSeconds());
+            updateFreezeTimerButton();
+        }));
         timerTimeline.setCycleCount(Timeline.INDEFINITE);
         timerTimeline.play();
     }
@@ -436,6 +472,30 @@ public class GameController {
         } else {
             extraHintButton.setText("Extra hint");
         }
+    }
+    private void updateFreezeTimerButton() {
+        if (freezeTimerButton == null) {
+            return;
+        }
+        PuzzlePalaceFacade facade = App.getFacade();
+        boolean show = facade != null && activePuzzle != null && facade.canUseFreezeTimerItem();
+        freezeTimerButton.setVisible(show);
+        freezeTimerButton.setManaged(show);
+        if (!show) {
+            freezeTimerButton.setText("Freeze Timer");
+            freezeTimerButton.setDisable(false);
+            return;
+        }
+        boolean active = facade.isFreezeTimerActive();
+        int charges = Math.max(0, facade.getFreezeTimerChargeCount());
+        if (active) {
+            freezeTimerButton.setText("Freeze Active");
+        } else if (charges > 1) {
+            freezeTimerButton.setText(String.format("Freeze Timer (%d)", charges));
+        } else {
+            freezeTimerButton.setText("Freeze Timer");
+        }
+        freezeTimerButton.setDisable(active);
     }
 
     private boolean hasRemainingHintsAvailable(Puzzle puzzle) {

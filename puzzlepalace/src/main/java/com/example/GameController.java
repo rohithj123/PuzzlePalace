@@ -20,6 +20,10 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 
+/**
+ * Controls the game screen.
+ * Loads puzzles, handles answers, hints, timer, and final certificate.
+ */
 public class GameController {
 
     private static final int STANDARD_HINT_LIMIT = 3;
@@ -87,11 +91,16 @@ public class GameController {
 
     private Timeline timerTimeline;
 
+
+        /** Called after FXML loads. Sets up the screen. */
+
     @FXML
     private void initialize() {
         loadPuzzle();
         updateProgressSummary();
     }
+
+            /** Loads the current puzzle and updates UI state. */
 
     private void loadPuzzle() {
         PuzzlePalaceFacade facade = App.getFacade();
@@ -150,6 +159,9 @@ public class GameController {
         updateProgressSummary();
     }
 
+
+        /** Called when the user submits an answer. */
+
     @FXML
     private void handleSubmitAnswer() {
         if (activePuzzle == null) {
@@ -171,6 +183,7 @@ public class GameController {
         updateFreezeTimerButton();
     }
 
+        /** Gives a standard hint if available. */
     @FXML
     private void handleRequestHint() {
         if (activePuzzle == null) {
@@ -237,6 +250,7 @@ public class GameController {
         updateFreezeTimerButton();
     }
 
+        /** Returns to the dashboard screen. */
     @FXML
     private void handleReturnToDashboard() {
         try {
@@ -247,6 +261,7 @@ public class GameController {
         }
     }
 
+        /** Shows UI for when a puzzle is solved. */
     private void displaySolvedState() {
         answerField.setDisable(true);
         submitButton.setDisable(true);
@@ -290,6 +305,7 @@ public class GameController {
 
     }
 
+        /** Attempts to freeze the active timer (if allowed). */
     @FXML
     private void handleFreezeTimer() {
         PuzzlePalaceFacade facade = App.getFacade();
@@ -320,6 +336,7 @@ public class GameController {
         timerTimeline.play();
     }
 
+        /** Starts the timer with option to reset shown time. */
     private void startTimer(boolean resetDisplay) {
         stopTimer();
         App.getFacade().ensureActivePuzzleTimerStarted();
@@ -343,6 +360,7 @@ public class GameController {
         }
     }
 
+        /** Sets timer label text using seconds. */
     private void updateTimerLabelWithSeconds(long totalSeconds) {
         if (timerLabel == null) {
             return;
@@ -450,6 +468,8 @@ public class GameController {
         }
         return total;
     }
+
+        /** Updates whether to show the extra hint button. */
     private void updateExtraHintButton() {
         if (extraHintButton == null) {
             return;
@@ -473,6 +493,8 @@ public class GameController {
             extraHintButton.setText("Extra hint");
         }
     }
+
+        /** Updates the freeze timer button text and state. */
     private void updateFreezeTimerButton() {
         if (freezeTimerButton == null) {
             return;
@@ -498,6 +520,7 @@ public class GameController {
         freezeTimerButton.setDisable(active);
     }
 
+        /** Checks if any hints remain for the puzzle. */
     private boolean hasRemainingHintsAvailable(Puzzle puzzle) {
         if (puzzle == null) {
             return false;
@@ -505,6 +528,7 @@ public class GameController {
         return hasAnyHintsAvailable(puzzle);
     }
 
+        /** Checks if standard (free) hints are still allowed. */
     private boolean hasStandardHintsRemaining(Puzzle puzzle) {
         if (puzzle == null) {
             return false;
@@ -518,6 +542,7 @@ public class GameController {
         return used < allowed;
     }
 
+        /** Checks if puzzle has any hint slots left. */
     private boolean hasAnyHintsAvailable(Puzzle puzzle) {
         if (puzzle == null) {
             return false;
@@ -530,6 +555,7 @@ public class GameController {
         return used < maxHints;
     }
 
+        /** Difficulty multiplier: EASY=1, MEDIUM=2, HARD=3. */
     private int resolveDifficultyMultiplier(Settings.Difficulty difficulty) {
         Settings.Difficulty resolved = difficulty == null ? Settings.Difficulty.EASY : difficulty;
         switch (resolved) {

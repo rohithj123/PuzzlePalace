@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Represents a single word puzzle.
+ * Stores the question, answers, and hints for a word-based puzzle.
+ */
 public class WordPuzzle 
 {
 
@@ -16,6 +20,7 @@ public class WordPuzzle
     private int hintsUsed;
     private final Random rng = new Random();
 
+    /** Creates an empty puzzle with default values. */
     public WordPuzzle() 
     {
         this.wordList = new ArrayList<>();
@@ -23,6 +28,7 @@ public class WordPuzzle
         this.hintsUsed = 0;
     }
 
+    /** Creates a puzzle with full details. */
     public WordPuzzle(int puzzleId, String question, List<String> wordList, String correctAnswer, List<String> hints) {
         this();
         this.puzzleId = puzzleId;
@@ -32,6 +38,7 @@ public class WordPuzzle
         if (hints != null) this.hints = new ArrayList<>(hints);
     }
 
+    /** Creates a puzzle and picks a random answer from the list. */
     public WordPuzzle(List<String> wordList, List<String> hints) 
     {
         this();
@@ -40,6 +47,7 @@ public class WordPuzzle
         pickRandomAnswerAndBuildQuestion();
     }
 
+    /** Picks a random answer and builds a question string. */
     private void pickRandomAnswerAndBuildQuestion() 
     {
         if (wordList == null || wordList.isEmpty())
@@ -63,6 +71,13 @@ public class WordPuzzle
             this.question = sb.toString();
         }
     }
+
+        /**
+     * Checks the user's answer and returns feedback.
+     *
+     * @param userAnswer the answer the user gave
+     * @return feedback text showing if it’s correct or not
+     */
 
     public String evaluateSolution(String userAnswer) 
     {
@@ -91,12 +106,15 @@ public class WordPuzzle
         }
     }
 
+        /** Returns the next hint, if available. */
     public synchronized String getHint() 
     {
         if (hints == null || hints.isEmpty()) return "No hints available.";
         if (hintsUsed >= hints.size()) return "All hints have been used.";
         return hints.get(hintsUsed++);
     }
+
+    /** Resets puzzle progress and picks a new random answer. */
     public synchronized void resetPuzzle() 
     {
         this.hintsUsed = 0;
@@ -130,6 +148,7 @@ public class WordPuzzle
 
     public int getHintsUsed() { return hintsUsed; }
 
+    /** Returns a readable summary of the puzzle for debugging. */
     @Override
     public String toString()
     {

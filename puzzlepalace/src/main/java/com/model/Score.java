@@ -10,6 +10,8 @@ public class Score {
     private int hintsUsed;
     private int timeTaken;
     private Progress progress;
+    private int freeHintTokens;
+
 
     public Score() {
         this(0, 0, 0, 0);
@@ -21,6 +23,7 @@ public class Score {
         this.puzzlesSolved = Math.max(0, puzzlesSolved);
         this.hintsUsed = Math.max(0, hintsUsed);
         this.timeTaken = Math.max(0, timeTaken);
+        this.freeHintTokens = 0;
     }
 
     public int calculateScore() {
@@ -81,13 +84,20 @@ public class Score {
 
     public void setProgress(Progress progress) {
         this.progress = progress;
+    }
+
+    public int getFreeHintTokens() {
+        return freeHintTokens;
+    }
+
+    public void setFreeHintTokens(int freeHintTokens) {
+        this.freeHintTokens = Math.max(0, freeHintTokens);
     }   
 
     @Override
     public String toString() {
         return "Score [points=" + points + ", puzzlesSolved=" + puzzlesSolved + ", hintsUsed=" + hintsUsed
-                + ", timeTaken=" + timeTaken + "]";
-    }
+        + ", timeTaken=" + timeTaken + ", freeHintTokens=" + freeHintTokens + "]";    }
     
     
 }

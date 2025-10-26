@@ -1,5 +1,9 @@
 package com.model;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,12 +29,11 @@ public class PuzzlePalaceFacade {
     private int currentRoomIndex;
     private final Random random = new Random();
 
+
     public PuzzlePalaceFacade() {
-        this.userDataPath = "users.json";
-        this.playerManager = new PlayerManager();
-        this.availableRooms = new ArrayList<>();
+        this("json/users.json");
     }
-          
+
     public PuzzlePalaceFacade(String userDataPath) {
         this.playerManager = new PlayerManager();
         this.userDataPath = userDataPath;
@@ -98,7 +101,6 @@ public class PuzzlePalaceFacade {
         }
 
         List<Room> rooms = createRoomsForDifficulty(getSelectedDifficulty());
-        Collections.shuffle(rooms, random);
         availableRooms.addAll(rooms);
 
         if (!availableRooms.isEmpty()) {
@@ -887,11 +889,11 @@ return rooms;
         String previousStatus = puzzle.getStatus();
         boolean solved = puzzle.trySolve(answer);
         if (solved && (previousStatus == null || !"SOLVED".equalsIgnoreCase(previousStatus))) {
+            boolean newlySolved = false;
             if (currentPlayer != null) {
-                currentPlayer.recordPuzzleSolved();
-                currentPlayer.awardBonusPoints(100);
-                if (puzzle.getHintsUsed() == 0) {
-                    currentPlayer.awardHintToken();
+                newlySolved = currentPlayer.recordPuzzleCompletion(puzzle, answer);
+                if (newlySolved) {
+                    currentPlayer.awardBonusPoints(100);
                 }
             }
             if (puzzleStartTime != null) {
@@ -926,9 +928,9 @@ return rooms;
         currentPlayer.saveProgress();
         Score score = currentPlayer.getScoreDetails();
         if (score != null) {
-            if (activePuzzle != null) {
-                score.setHintsUsed(activePuzzle.getPenaltyHintsUsed());
-            }        }
+            score.setHintsUsed(currentPlayer.getTotalHintsUsedFromHistory());
+            score.setPuzzlesSolved(Math.max(score.getPuzzlesSolved(), currentPlayer.getSolvedPuzzleCountFromHistory()));
+        }
         DataWriter.saveUsers(playerManager.getAllPlayers(), userDataPath);
     }
 
@@ -938,42 +940,66 @@ return rooms;
             return "No puzzle loaded.";
         }
         String hint = puzzle.requestHint();
-        boolean deliveredHint = hint != null
-            && !"No hints available.".equalsIgnoreCase(hint)
-            && !"All hints have been used.".equalsIgnoreCase(hint);
-        boolean usedToken = false;
-        if (deliveredHint && currentPlayer != null) {            Score score = currentPlayer.getScoreDetails();
-            if (score != null) {
-                usedToken = currentPlayer.spendHintToken();
-                if (usedToken) {
-                    puzzle.markLastHintFree();
-                }
-                score.setHintsUsed(puzzle.getPenaltyHintsUsed());
-            }
+        if (currentPlayer != null) {
+            currentPlayer.recordHintUsed(puzzle, hint);  
+        }
+        return hint;    
+    }
 
-        } else if (currentPlayer != null) {
-            Score score = currentPlayer.getScoreDetails();
-            if (score != null) {
-                score.setHintsUsed(puzzle.getPenaltyHintsUsed());
+    public PlayerProgressReport getCurrentPlayerProgressReport() {
+        if (currentPlayer == null) {
+            return PlayerProgressReport.empty();
+        }
+        List<PuzzleProgressSnapshot> snapshots = currentPlayer.getPuzzleProgressSnapshots();
+        int totalPuzzles = 0;
+        for (Room room : availableRooms) {
+            if (room == null) {
+                continue;
+            }
+            totalPuzzles += room.getPuzzles().size();
+        }
+        if (totalPuzzles == 0 && !snapshots.isEmpty()) {
+            totalPuzzles = snapshots.size();
+        }
+        int solved = 0;
+        for (PuzzleProgressSnapshot snapshot : snapshots) {
+            if (snapshots != null && snapshot.isSolved()) {
+                solved++;
             }
         }
-        if (usedToken && hint != null) {
-            hint = hint + "\n(Free clue token used—no score penalty!)";
-        }
-        return hint;
-        }
-        
-        public void startEscapeRoom() {
-            if (currentPlayer == null) {
-                availableRooms.clear();
-                currentRoom = null;
-                activePuzzle = null;
-                currentRoomIndex = -1;
-                puzzleStartTime = null;
-                lastCompletionSeconds = 0L;
-                return;
+        int percent = totalPuzzles == 0 ? 0 : (int) Math.min(100,
+                Math.round((solved * 100.0) / Math.max(1, totalPuzzles)));
+        return new PlayerProgressReport(percent, solved, totalPuzzles, snapshots);
+    }
+
+    public String readUserDataFileContents() {
+        Path path = Paths.get(userDataPath);
+        try {
+            if (!Files.exists(path)) {
+                return "Save file not found at " + path.toAbsolutePath();
             }
-        
+            return Files.readString(path);
+        } catch (IOException e) {
+            return  "Unable to read save file: " + e.getMessage();
+        }
+    }
+
+    public String getUserDataPath() {
+        return userDataPath;
+    }
+
+    public void startEscapeRoom() {
+        if (currentPlayer == null) {
+            availableRooms.clear();
+            currentRoom = null;
+            activePuzzle = null;
+            currentRoomIndex = -1;
+            puzzleStartTime = null;
+            lastCompletionSeconds = 0L;
+            return;
+        }
+
         buildRoomsFor(currentPlayer);
+
     }
 }

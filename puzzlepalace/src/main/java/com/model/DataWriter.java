@@ -37,6 +37,37 @@ public class DataWriter {
             if (!guestFlag.isEmpty()) {
                 playerObj.put("isGuest", Boolean.parseBoolean(guestFlag));
             }
+            
+            Score score = p.getScoreDetails();
+            if (score != null) {
+                JSONObject scoreObj = new JSONObject();
+                scoreObj.put("points", score.getPoints());
+                scoreObj.put("puzzlesSolved", score.getPuzzlesSolved());
+                scoreObj.put("hintsUsed", score.getHintsUsed());
+                scoreObj.put("timeTaken", score.getTimeTaken());
+                playerObj.put("score", scoreObj);
+            }
+
+            JSONArray historyArray = new JSONArray();
+            for (PuzzleProgressSnapshot snapshot : p.getPuzzleProgressSnapshots()) {
+                if (snapshot == null) {
+                    continue;
+                }
+                JSONObject entry = new JSONObject();
+                entry.put("puzzleId", snapshot.getPuzzleId());
+                entry.put("question", snapshot.getQuestion());
+                entry.put("status", snapshot.getStatus());
+                entry.put("answer", snapshot.getAnswer());
+                entry.put("lastUpdated", snapshot.getLastUpdated().toString());
+                JSONArray hintsArray = new JSONArray();
+                for (String hint : snapshot.getHintsUsed()) {
+                    hintsArray.add(hint);
+                }
+                entry.put("hintsUsed", hintsArray);
+                historyArray.add(entry);
+            }
+            playerObj.put("progressLog", historyArray);
+
             playerArray.add(playerObj);
         }
 

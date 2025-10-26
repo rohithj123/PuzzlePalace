@@ -2,14 +2,14 @@ package com.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Player {
 
-    private static final int HINT_TOKEN_ITEM_ID = 9001;
-    private static final String HINT_TOKEN_NAME = "Clue Token";
     private final UUID playerID;
     private String username;
     private String email;
@@ -20,6 +20,8 @@ public class Player {
     private final Progress progress;
     private final Score score;
     private Certificate certificate;
+    private final Map<Integer, PuzzleProgressSnapshot> puzzleProgress;
+    private final Object progressLock = new Object();
 
     public Player() {
         this(null, null, null, true);
@@ -34,6 +36,7 @@ public class Player {
         this.inventory = new ArrayList<>();
         this.progress = new Progress(this, null);
         this.score = progress.getScore();
+        this.puzzleProgress = new LinkedHashMap<>();
         this.email = sanitizeEmail(email);
         this.guest = guestAccount;
         initialiseUsername(username);
@@ -136,29 +139,6 @@ public class Player {
             inventory.add(item);
             return true;
         }
-    }
-    public void awardHintToken() {
-        Item token = new Item(HINT_TOKEN_ITEM_ID, HINT_TOKEN_NAME);
-        addItem(token);
-        score.addFreeHintToken();
-    }
-    
-    public boolean spendHintToken() {
-        synchronized (inventoryLock) {
-            for (int i = 0; i < inventory.size(); i++) {
-                Item candidate = inventory.get(i);
-                if (candidate != null && candidate.getId() == HINT_TOKEN_ITEM_ID) {
-                    inventory.remove(i);
-                    score.consumeFreeHintToken();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public int getHintTokenCount() {
-        return score.getFreeHintTokens();
     }
 
     public boolean removeItem(Item item) {
@@ -317,7 +297,7 @@ public class Player {
             solved = false;
         }
         if (solved) {
-            recordPuzzleSolved();
+            recordPuzzleCompletion(puzzle, answer);
         }
         return solved;
     }
@@ -329,6 +309,97 @@ public class Player {
         }
     }
 
+    public boolean recordPuzzleCompletion(Puzzle puzzle, String answer) {
+        if (puzzle == null) {
+            recordPuzzleSolved();
+            return true;
+        }
+        synchronized (progressLock) {
+            PuzzleProgressSnapshot snapshot = puzzleProgress.computeIfAbsent(
+                puzzle.getPuzzleId(),
+                id -> new PuzzleProgressSnapshot(id, puzzle.getDescription())
+            );
+            boolean newlySolved = !snapshot.isSolved();
+            if (newlySolved) {
+                recordPuzzleSolved();
+            }
+            snapshot.recordAnswer(answer, true);
+            return newlySolved;
+        }
+    }
+
+    public void recordHintUsed(Puzzle puzzle, String hintText) {
+        if (puzzle == null) {
+            return;
+        }
+        synchronized (progressLock) {
+            PuzzleProgressSnapshot snapshot = puzzleProgress.computeIfAbsent(
+                puzzle.getPuzzleId(),
+                id -> new PuzzleProgressSnapshot(id, puzzle.getDescription())
+            );
+            snapshot.addHint(hintText);
+            int total = 0;
+            for (PuzzleProgressSnapshot entry : puzzleProgress.values()) {
+                if (entry != null) {
+                    total += entry.getHintCount();
+                }
+            }
+            score.setHintsUsed(total);
+        }
+    }
+
+    public List<PuzzleProgressSnapshot> getPuzzleProgressSnapshots() {
+        synchronized (progressLock) {
+            return new ArrayList<>(puzzleProgress.values());
+        }
+    }
+
+    public void replaceProgressHistory(List<PuzzleProgressSnapshot> snapshots) {
+        synchronized (progressLock) {
+            puzzleProgress.clear();
+            if (snapshots == null) {
+                return;
+            }
+            for (PuzzleProgressSnapshot snapshot : snapshots) {
+                if (snapshot == null) {
+                    continue;
+                }
+                puzzleProgress.put(snapshot.getPuzzleId(), snapshot);
+            }
+        }
+    }
+
+    public int getSolvedPuzzleCountFromHistory() {
+        synchronized (progressLock) {
+            int solved = 0;
+            for (PuzzleProgressSnapshot snapshot : puzzleProgress.values()) {
+                if (snapshot != null && snapshot.isSolved()) {
+                    solved++;
+                }
+            }
+            return solved;
+        }
+    }
+
+    public int getTotalHintsUsedFromHistory() {
+        synchronized (progressLock) {
+            int total = 0;
+            for (PuzzleProgressSnapshot snapshot : puzzleProgress.values()) {
+                if (snapshot != null) {
+                    total += snapshot.getHintCount();
+                }
+            }
+            return total;
+        }
+    }
+
+    public void applyScoreData(int points, int puzzlesSolved, int hintsUsed, int timeTaken) {
+        score.setPoints(points);
+        score.setPuzzlesSolved(puzzlesSolved);
+        score.setHintsUsed(hintsUsed);
+        score.setTimeTaken(timeTaken);
+    }
+    
     public void startNewGame(List<String> hints) {
         if (hints != null) {
             progress.setAvailableHints(hints);

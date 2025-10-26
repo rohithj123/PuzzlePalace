@@ -165,6 +165,8 @@ public class Progress {
             writer.newLine();
             writer.write("scoreTimeTaken=" + score.getTimeTaken());
             writer.newLine();
+            writer.write("scoreFreeHintTokens=" + score.getFreeHintTokens());
+            writer.newLine();
             writer.write("availableHints=" + String.join(HINT_DELIMITER, hintsToWrite));
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,6 +229,9 @@ public class Progress {
                         break;
                     case "scoreTimeTaken":
                         this.score.setTimeTaken(parseInt(value, score.getTimeTaken()));
+                        break;
+                    case "scoreFreeHintTokens":
+                        this.score.setFreeHintTokens(parseInt(value, score.getFreeHintTokens()));
                         break;
                     case "availableHints":
                         this.availableHints = parseHints(value);

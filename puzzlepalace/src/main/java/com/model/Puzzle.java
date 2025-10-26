@@ -57,12 +57,22 @@ public abstract class Puzzle {
         return hints == null ? 0 : hints.getHintsUsed();
     }
 
+    public int getPenaltyHintsUsed() {
+        return hints == null ? 0 : hints.getPenaltyHintsUsed();
+    }
+
     public int getMaxHints() {
         return hints == null ? 0 : hints.getMaxHints();
     }
 
     public String requestHint() {
         return hints == null ? "No hints available." : hints.getHint();
+    }
+    
+    public void markLastHintFree() {
+        if (hints != null) {
+            hints.markLastHintFree();
+        }
     }
 
     public List<String> getAvailableHints() {

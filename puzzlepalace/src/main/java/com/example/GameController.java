@@ -9,7 +9,6 @@ import com.model.Room;
 import com.model.Score;
 import com.model.Settings;
 
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -145,8 +144,11 @@ public class GameController {
         String answer = answerField.getText();
         boolean solved = App.getFacade().submitPuzzleAnswer(activePuzzle.getPuzzleId(), answer);
         if (solved) {
-            feedbackLabel.setText("Correct! The door unlocks with a satisfying click.");
-            displaySolvedState();
+            StringBuilder message = new StringBuilder("Correct! The door unlocks with a satisfying click.");
+            if (activePuzzle.getHintsUsed() == 0) {
+                message.append("\nYou earned a free clue token for solving without hints!");
+            }
+            feedbackLabel.setText(message.toString());
         } else {
             feedbackLabel.setText("That's not quite right. Try another combination.");
         }
@@ -343,7 +345,7 @@ public class GameController {
             }
             for (Puzzle puzzle : room.getPuzzles()) {
                 if (puzzle != null) {
-                    total += Math.max(0, puzzle.getHintsUsed());
+                    total += Math.max(0, puzzle.getPenaltyHintsUsed());
                 }
             }
         }

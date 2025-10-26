@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public class Player {
 
+    private static final int HINT_TOKEN_ITEM_ID = 9001;
+    private static final String HINT_TOKEN_NAME = "Clue Token";
     private final UUID playerID;
     private String username;
     private String email;
@@ -134,6 +136,29 @@ public class Player {
             inventory.add(item);
             return true;
         }
+    }
+    public void awardHintToken() {
+        Item token = new Item(HINT_TOKEN_ITEM_ID, HINT_TOKEN_NAME);
+        addItem(token);
+        score.addFreeHintToken();
+    }
+    
+    public boolean spendHintToken() {
+        synchronized (inventoryLock) {
+            for (int i = 0; i < inventory.size(); i++) {
+                Item candidate = inventory.get(i);
+                if (candidate != null && candidate.getId() == HINT_TOKEN_ITEM_ID) {
+                    inventory.remove(i);
+                    score.consumeFreeHintToken();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int getHintTokenCount() {
+        return score.getFreeHintTokens();
     }
 
     public boolean removeItem(Item item) {

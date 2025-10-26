@@ -25,11 +25,12 @@ public class PuzzlePalaceFacade {
     private int currentRoomIndex;
     private final Random random = new Random();
 
-
     public PuzzlePalaceFacade() {
-        this("json/users.json");
+        this.userDataPath = "users.json";
+        this.playerManager = new PlayerManager();
+        this.availableRooms = new ArrayList<>();
     }
-
+          
     public PuzzlePalaceFacade(String userDataPath) {
         this.playerManager = new PlayerManager();
         this.userDataPath = userDataPath;
@@ -889,6 +890,9 @@ return rooms;
             if (currentPlayer != null) {
                 currentPlayer.recordPuzzleSolved();
                 currentPlayer.awardBonusPoints(100);
+                if (puzzle.getHintsUsed() == 0) {
+                    currentPlayer.awardHintToken();
+                }
             }
             if (puzzleStartTime != null) {
                 lastCompletionSeconds = Math.max(0L, Duration.between(puzzleStartTime, Instant.now()).getSeconds());
@@ -922,8 +926,9 @@ return rooms;
         currentPlayer.saveProgress();
         Score score = currentPlayer.getScoreDetails();
         if (score != null) {
-            score.setHintsUsed(activePuzzle != null ? activePuzzle.getHintsUsed() : score.getHintsUsed());
-        }
+            if (activePuzzle != null) {
+                score.setHintsUsed(activePuzzle.getPenaltyHintsUsed());
+            }        }
         DataWriter.saveUsers(playerManager.getAllPlayers(), userDataPath);
     }
 
@@ -933,26 +938,42 @@ return rooms;
             return "No puzzle loaded.";
         }
         String hint = puzzle.requestHint();
-        if (currentPlayer != null) {
+        boolean deliveredHint = hint != null
+            && !"No hints available.".equalsIgnoreCase(hint)
+            && !"All hints have been used.".equalsIgnoreCase(hint);
+        boolean usedToken = false;
+        if (deliveredHint && currentPlayer != null) {            Score score = currentPlayer.getScoreDetails();
+            if (score != null) {
+                usedToken = currentPlayer.spendHintToken();
+                if (usedToken) {
+                    puzzle.markLastHintFree();
+                }
+                score.setHintsUsed(puzzle.getPenaltyHintsUsed());
+            }
+
+        } else if (currentPlayer != null) {
             Score score = currentPlayer.getScoreDetails();
             if (score != null) {
-                score.setHintsUsed(puzzle.getHintsUsed());
+                score.setHintsUsed(puzzle.getPenaltyHintsUsed());
             }
         }
-        return hint;    }
-
-    public void startEscapeRoom() {
-        if (currentPlayer == null) {
-            availableRooms.clear();
-            currentRoom = null;
-            activePuzzle = null;
-            currentRoomIndex = -1;
-            puzzleStartTime = null;
-            lastCompletionSeconds = 0L;
-            return;
+        if (usedToken && hint != null) {
+            hint = hint + "\n(Free clue token used—no score penalty!)";
         }
-
+        return hint;
+        }
+        
+        public void startEscapeRoom() {
+            if (currentPlayer == null) {
+                availableRooms.clear();
+                currentRoom = null;
+                activePuzzle = null;
+                currentRoomIndex = -1;
+                puzzleStartTime = null;
+                lastCompletionSeconds = 0L;
+                return;
+            }
+        
         buildRoomsFor(currentPlayer);
-
     }
 }

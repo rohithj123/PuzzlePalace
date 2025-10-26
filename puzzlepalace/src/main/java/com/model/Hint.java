@@ -10,6 +10,7 @@ public class Hint
     private int hintsUsed;
     private int maxHints = 3;
     private List<String> availableHints = new ArrayList<>();
+    private int penaltyHintsUsed;
 
     public Hint() { }
 
@@ -35,6 +36,7 @@ public class Hint
 
         String hint = availableHints.get(hintsUsed);
         hintsUsed++;
+        penaltyHintsUsed++;
         return Objects.toString(hint, "No hint.");
     }
 
@@ -58,6 +60,7 @@ public class Hint
             this.availableHints = new ArrayList<>(hints);
         }
         this.hintsUsed = 0;
+        this.penaltyHintsUsed = 0;
     }
 
     public synchronized List<String> getAvailableHintsSnapshot() 
@@ -68,11 +71,24 @@ public class Hint
     public synchronized void resetHintsUsed() 
     {
         this.hintsUsed = 0;
+        this.penaltyHintsUsed = 0;
     }
 
     public synchronized int getHintsUsed() 
     {
         return hintsUsed;
+    }
+    public synchronized int getPenaltyHintsUsed()
+    {
+        return Math.max(0, penaltyHintsUsed);
+    }
+
+    public synchronized void markLastHintFree()
+    {
+        if (penaltyHintsUsed > 0)
+        {
+            penaltyHintsUsed--;
+        }
     }
 
     public synchronized int getMaxHints() 

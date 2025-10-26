@@ -2,8 +2,11 @@ package com.example;
 
 import java.io.IOException;
 
+import com.model.Player;
 import com.model.Puzzle;
 import com.model.PuzzlePalaceFacade;
+import com.model.Room;
+import com.model.Score;
 import com.model.Settings;
 
 
@@ -13,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 
@@ -48,6 +52,29 @@ public class GameController {
     @FXML
     private Button nextButton;
 
+    @FXML
+    private VBox certificateBox;
+
+    @FXML
+    private Label certificateTitleLabel;
+
+    @FXML
+    private Label certificateMessageLabel;
+
+    @FXML
+    private Label certificateDifficultyLabel;
+
+    @FXML
+    private Label certificateHintsLabel;
+
+    @FXML
+    private Label certificateScoreLabel;
+
+    @FXML
+    private Label certificateFooterLabel;
+
+
+
     private Puzzle activePuzzle;
 
     private Timeline timerTimeline;
@@ -60,6 +87,8 @@ public class GameController {
 
     private void loadPuzzle() {
         PuzzlePalaceFacade facade = App.getFacade();
+        hideCertificate();
+
         activePuzzle = facade.getActivePuzzle();
         if (roomTitleLabel != null) {
             Settings.Difficulty difficulty = facade.getSelectedDifficulty();
@@ -82,6 +111,9 @@ public class GameController {
             stopTimer();
             updateTimerLabelWithSeconds(0);
             updateProgressSummary();
+            if (!facade.hasNextRoom()) {
+                showCertificate();
+            }
             return;
         }
 
@@ -158,6 +190,12 @@ public class GameController {
         long lastSeconds = App.getFacade().getLastCompletionSeconds();
         updateTimerLabelWithSeconds(lastSeconds);
         updateProgressSummary();
+        if (!hasNextRoom) {
+            showCertificate();
+        } else {
+            hideCertificate();
+        }
+
     }
 
     @FXML
@@ -167,6 +205,8 @@ public class GameController {
         boolean advanced = facade.moveToNextRoom();
         if (!advanced) {
             feedbackLabel.setText("No more rooms to explore. Return to the dashboard to celebrate!");
+            showCertificate();
+
             return;
         }
         loadPuzzle();
@@ -223,6 +263,103 @@ public class GameController {
             progressSummaryLabel.setText(String.format("Previous escape time: %02d:%02d", minutes, seconds));
         } else {
             progressSummaryLabel.setText("No escape time recorded yet.");
+        }
+    }
+
+    private void hideCertificate() {
+        if (certificateBox != null) {
+            certificateBox.setVisible(false);
+            certificateBox.setManaged(false);
+        }
+        if (certificateMessageLabel != null) {
+            certificateMessageLabel.setText("");
+        }
+        if (certificateDifficultyLabel != null) {
+            certificateDifficultyLabel.setText("");
+        }
+        if (certificateHintsLabel != null) {
+            certificateHintsLabel.setText("");
+        }
+        if (certificateScoreLabel != null) {
+            certificateScoreLabel.setText("");
+        }
+        if (certificateFooterLabel != null) {
+            certificateFooterLabel.setText("");
+        }
+    }
+
+    private void showCertificate() {
+        if (certificateBox == null) {
+            return;
+        }
+        PuzzlePalaceFacade facade = App.getFacade();
+        Settings.Difficulty difficulty = facade.getSelectedDifficulty();
+        String difficultyName = difficulty != null ? difficulty.getDisplayName() : Settings.Difficulty.EASY.getDisplayName();
+        int totalHintsUsed = calculateTotalHintsUsed(facade);
+        Player player = facade.getCurrentPlayer();
+        Score score = player != null ? player.getScoreDetails() : null;
+        int baseScore = score != null ? Math.max(0, score.calculateScore()) : 0;
+        int difficultyMultiplier = resolveDifficultyMultiplier(difficulty);
+        int hintPenaltyPer = 10;
+        int finalScore = Math.max(0, baseScore * difficultyMultiplier - totalHintsUsed * hintPenaltyPer);
+        if (score != null) {
+            score.setHintsUsed(totalHintsUsed);
+        }
+
+        if (certificateTitleLabel != null) {
+            certificateTitleLabel.setText("Puzzle Palace");
+        }
+        if (certificateMessageLabel != null) {
+            certificateMessageLabel.setText("You cracked the final vault and escaped the Puzzle Palace!");
+        }
+        if (certificateDifficultyLabel != null) {
+            certificateDifficultyLabel.setText(String.format("Difficulty Played: %s", difficultyName));
+        }
+        if (certificateHintsLabel != null) {
+            certificateHintsLabel.setText(String.format("Hints Used: %d", totalHintsUsed));
+        }
+        if (certificateScoreLabel != null) {
+            certificateScoreLabel.setText(String.format("Final Score: %,d", finalScore));
+        }
+        if (certificateFooterLabel != null) {
+            certificateFooterLabel.setText(String.format("Score = (base %,d × %dx difficulty) − %d from hints.",
+                    baseScore,
+                    difficultyMultiplier,
+                    totalHintsUsed * hintPenaltyPer));
+        }
+
+        certificateBox.setVisible(true);
+        certificateBox.setManaged(true);
+    }
+
+    private int calculateTotalHintsUsed(PuzzlePalaceFacade facade) {
+        int total = 0;
+        if (facade == null) {
+            return total;
+        }
+        for (Room room : facade.listAvailableRooms()) {
+            if (room == null) {
+                continue;
+            }
+            for (Puzzle puzzle : room.getPuzzles()) {
+                if (puzzle != null) {
+                    total += Math.max(0, puzzle.getHintsUsed());
+                }
+            }
+        }
+        return total;
+    }
+
+    private int resolveDifficultyMultiplier(Settings.Difficulty difficulty) {
+        Settings.Difficulty resolved = difficulty == null ? Settings.Difficulty.EASY : difficulty;
+        switch (resolved) {
+            case HARD:
+                return 3;
+            case MEDIUM:
+                return 2;
+            case EASY:
+            default:
+                return 1;
         }
     }
 }

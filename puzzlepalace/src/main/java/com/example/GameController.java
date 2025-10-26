@@ -96,6 +96,8 @@ public class GameController {
     private Timeline timerTimeline;
     private boolean firstRoomTransitionAcknowledged;
     private boolean secondRoomTransitionAcknowledged;
+    private boolean finalEscapeMessageShown;
+
 
 
 
@@ -115,6 +117,13 @@ public class GameController {
         hideCertificate();
 
         activePuzzle = facade.getActivePuzzle();
+        if (activePuzzle == null) {
+            finalEscapeMessageShown = false;
+        } else if (!"SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
+            finalEscapeMessageShown = false;
+        } else if (facade != null && !facade.hasNextRoom()) {
+            finalEscapeMessageShown = true;
+        }
         if (facade.isCurrentRoomFirst() && (activePuzzle == null || !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus()))) {
             firstRoomTransitionAcknowledged = false;
         }
@@ -189,6 +198,9 @@ public class GameController {
                 message.append("\nYou earned an extra hint token for solving without hints!");
             }
             feedbackLabel.setText(message.toString());
+            if (shouldShowEscapeCompletionMessage()) {
+                showEscapeCompletionAlert();
+            }
             displaySolvedState();
         } else {
             feedbackLabel.setText("That's not quite right. Try another combination.");
@@ -301,6 +313,27 @@ public class GameController {
         updateFreezeTimerButton();
 
     }
+
+    private boolean shouldShowEscapeCompletionMessage() {
+        PuzzlePalaceFacade facade = App.getFacade();
+        if (facade == null || finalEscapeMessageShown) {
+            return false;
+        }
+        if (activePuzzle == null || !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
+            return false;
+        }
+        return !facade.hasNextRoom();
+    }
+
+    private void showEscapeCompletionAlert() {
+        finalEscapeMessageShown = true;
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Escape Achieved");
+        alert.setHeaderText("You Escaped!");
+        alert.setContentText("The door opens with a loud click. Bright light fills the room as you step outside into the cool night. You’re free. Behind you, the PuzzlePalace becomes quiet and still again. You escaped.");
+        alert.showAndWait();
+    }
+
 
     @FXML
     private void handleNextRoom() {

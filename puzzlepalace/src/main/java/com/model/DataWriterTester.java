@@ -13,7 +13,6 @@ public class DataWriterTester
      * This runs the test for DataWriter.
      * This creates a few players, saves them to a file, and prints a message.
      *
-     * @param args command line arguments
      */
     public static void main(String[] args) 
     {

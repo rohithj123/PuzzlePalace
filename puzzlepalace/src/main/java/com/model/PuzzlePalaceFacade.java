@@ -951,6 +951,10 @@ public class PuzzlePalaceFacade {
         return currentRoomIndex == 0;
     }
 
+    public boolean isCurrentRoomSecond() {
+        return currentRoomIndex == 1;
+    }
+
 
     public String getCurrentRoomName() {
         Room room = getCurrentRoom();

@@ -95,6 +95,8 @@ public class GameController {
 
     private Timeline timerTimeline;
     private boolean firstRoomTransitionAcknowledged;
+    private boolean secondRoomTransitionAcknowledged;
+
 
 
 
@@ -115,6 +117,9 @@ public class GameController {
         activePuzzle = facade.getActivePuzzle();
         if (facade.isCurrentRoomFirst() && (activePuzzle == null || !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus()))) {
             firstRoomTransitionAcknowledged = false;
+        }
+        if (facade.isCurrentRoomSecond() && (activePuzzle == null || !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus()))) {
+            secondRoomTransitionAcknowledged = false;
         }
         if (roomTitleLabel != null) {
             Settings.Difficulty difficulty = facade.getSelectedDifficulty();
@@ -304,6 +309,10 @@ public class GameController {
         if (facade != null && facade.isCurrentRoomFirst() && !firstRoomTransitionAcknowledged) {
             showFirstRoomTransitionDialog(facade);
 
+            return;
+        }
+        if (facade != null && facade.isCurrentRoomSecond() && !secondRoomTransitionAcknowledged) {
+            showSecondRoomTransitionDialog(facade);
             return;
         }
         proceedToNextRoom(facade);
@@ -537,6 +546,22 @@ public class GameController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == nextButtonType) {
             firstRoomTransitionAcknowledged = true;
+            proceedToNextRoom(facade);
+        } else {
+            updateFreezeTimerButton();
+        }
+    }
+    private void showSecondRoomTransitionDialog(PuzzlePalaceFacade facade) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Final Door Unsealed");
+        alert.setHeaderText(null);
+        alert.setContentText("The word fades, and the door unlocks with a soft chime. A calm silence fills the air you take a deep breath and step into the final room.");
+        ButtonType nextButtonType = new ButtonType("Next", ButtonBar.ButtonData.OK_DONE);
+        alert.getButtonTypes().setAll(nextButtonType);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == nextButtonType) {
+            secondRoomTransitionAcknowledged = true;
             proceedToNextRoom(facade);
         } else {
             updateFreezeTimerButton();

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Immutable report summarizing a player's puzzle completion progress and 
+ * associated snapshots.
+ * 
+ * @author Everlast Chigoba
+ */
 public class PlayerProgressReport {
 
     private final int completionPercent;

@@ -8,6 +8,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a player profile including authentication state, inventory, 
+ * progress tracking, and scoring details.
+ * 
+ * @author Everlast Chigoba
+ */
+
 public class Player {
 
     private final UUID playerID;
@@ -428,7 +435,7 @@ public class Player {
         score.setHintsUsed(hintsUsed);
         score.setTimeTaken(timeTaken);
     }
-    
+
     public void startNewGame(List<String> hints) {
         if (hints != null) {
             progress.setAvailableHints(hints);

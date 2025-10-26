@@ -5,7 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-
+/**
+ * Thread-safe manager responsible for storing, authenticating, and retrieving
+ * player accounts within the application.
+ * 
+ * @author Everlast Chigoba
+ */
 public class PlayerManager 
 {
     private final List<Player> players;

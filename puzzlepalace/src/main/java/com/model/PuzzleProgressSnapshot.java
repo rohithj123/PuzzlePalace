@@ -6,6 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Captures the state of a puzzle attempt at a point in time including answers,
+ * status, hints used, and timestamps for progress tracking.
+ * 
+ * @author Everlast Chigoba
+ */
 public class PuzzleProgressSnapshot {
 
     private final int puzzleId;

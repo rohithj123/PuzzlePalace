@@ -11,6 +11,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tracks the ongoing state of a player's session including timing, hints, and
+ * persistence to disk for resume functionality.
+ * 
+ * @author Everlast Chigoba
+ */
+
 
 public class Progress {
 

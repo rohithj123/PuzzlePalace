@@ -12,6 +12,13 @@ public class Score {
     private Progress progress;
     private int freeHintTokens;
 
+    /**
+     * Represents a player's scoring state including accumulated points, penalties,
+     * and helper methods for computing leaderboard values.
+     * 
+     * @author Everlast Chigoba
+     */
+
 
     public Score() {
         this(0, 0, 0, 0);

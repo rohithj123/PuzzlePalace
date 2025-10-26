@@ -204,7 +204,7 @@ public class PuzzlePalaceFacade {
                 ),
                 new SimplePuzzle(
                         2007,
-                        "A clockwork raven scatters letters: C L O C K. Reassemble its lost name.",
+                        "A clockwork raven scatters letters: C O C K L. Reassemble its lost name.",
                         "clock",
                         "It's fond of ticking on the wall.",
                         "Two of the letters repeat, just like its steady chime."
@@ -361,7 +361,7 @@ private List<Room> createMediumRooms() {
     SimplePuzzle wordPuzzle = chooseRandom(List.of(
             new SimplePuzzle(
                     2106,
-                    "Carved runes glow softly: Arrange the letters P E A R L S to reveal the password whispered by the mages.",
+                    "Carved runes glow softly: Arrange the letters L A E R P S to reveal the password whispered by the mages.",
                     "pearls",
                     "Think of treasure formed within a humble shell.",
                     "The solution is plural and glimmers brightly.",

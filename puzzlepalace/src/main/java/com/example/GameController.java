@@ -1,6 +1,7 @@
 package com.example;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.model.HintRequestResult;
 import com.model.Player;
@@ -13,7 +14,10 @@ import com.model.Settings;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -90,6 +94,8 @@ public class GameController {
     private Puzzle activePuzzle;
 
     private Timeline timerTimeline;
+    private boolean firstRoomTransitionAcknowledged;
+
 
 
         /** Called after FXML loads. Sets up the screen. */
@@ -107,6 +113,9 @@ public class GameController {
         hideCertificate();
 
         activePuzzle = facade.getActivePuzzle();
+        if (facade.isCurrentRoomFirst() && (activePuzzle == null || !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus()))) {
+            firstRoomTransitionAcknowledged = false;
+        }
         if (roomTitleLabel != null) {
             Settings.Difficulty difficulty = facade.getSelectedDifficulty();
             String label = String.format("%s Challenge – %s",
@@ -292,16 +301,13 @@ public class GameController {
     private void handleNextRoom() {
         PuzzlePalaceFacade facade = App.getFacade();
         stopTimer();
-        boolean advanced = facade.moveToNextRoom();
-        if (!advanced) {
-            feedbackLabel.setText("No more rooms to explore. Return to the dashboard to celebrate!");
-            showCertificate();
-            updateFreezeTimerButton();
+        if (facade != null && facade.isCurrentRoomFirst() && !firstRoomTransitionAcknowledged) {
+            showFirstRoomTransitionDialog(facade);
 
             return;
         }
-        loadPuzzle();
-        updateFreezeTimerButton();
+        proceedToNextRoom(facade);
+
 
     }
 
@@ -519,6 +525,39 @@ public class GameController {
         }
         freezeTimerButton.setDisable(active);
     }
+
+    private void showFirstRoomTransitionDialog(PuzzlePalaceFacade facade) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Corridor Unlocked");
+        alert.setHeaderText(null);
+        alert.setContentText("The equation clicks into place. A hidden panel slides open, letting a draft of cool air whisper past. A corridor of books and runes awaits you step forward, heartbeat steady, into the next room.");
+        ButtonType nextButtonType = new ButtonType("Next", ButtonBar.ButtonData.OK_DONE);
+        alert.getButtonTypes().setAll(nextButtonType);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == nextButtonType) {
+            firstRoomTransitionAcknowledged = true;
+            proceedToNextRoom(facade);
+        } else {
+            updateFreezeTimerButton();
+        }
+    }
+
+    private void proceedToNextRoom(PuzzlePalaceFacade facade) {
+        if (facade == null) {
+            return;
+        }
+        boolean advanced = facade.moveToNextRoom();
+        if (!advanced) {
+            feedbackLabel.setText("No more rooms to explore. Return to the dashboard to celebrate!");
+            showCertificate();
+            updateFreezeTimerButton();
+            return;
+        }
+        loadPuzzle();
+        updateFreezeTimerButton();
+    }
+
 
         /** Checks if any hints remain for the puzzle. */
     private boolean hasRemainingHintsAvailable(Puzzle puzzle) {

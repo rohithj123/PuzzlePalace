@@ -946,6 +946,11 @@ public class PuzzlePalaceFacade {
     public boolean isNextRoomFinal() {
         return hasNextRoom() && currentRoomIndex + 1 == availableRooms.size() - 1;
     }
+    
+    public boolean isCurrentRoomFirst() {
+        return currentRoomIndex == 0;
+    }
+
 
     public String getCurrentRoomName() {
         Room room = getCurrentRoom();

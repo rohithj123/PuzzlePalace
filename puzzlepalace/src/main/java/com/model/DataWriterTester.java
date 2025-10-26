@@ -2,9 +2,19 @@ package com.model;
 
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * This tests the DataWriter class.
+ * This creates sample player data and writes it to a JSON file.
+ */
 
 public class DataWriterTester 
 {
+    /**
+     * This runs the test for DataWriter.
+     * This creates a few players, saves them to a file, and prints a message.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) 
     {
         String filePath = "data/users.json"; 

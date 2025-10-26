@@ -36,11 +36,6 @@
                             onAction="#handleUseFreeClueToken"
                             visible="false"
                             managed="false" />
-                    <Button fx:id="freezeTimerButton"
-                            text="Freeze Timer"
-                            onAction="#handleFreezeTimer"
-                            visible="false"
-                            managed="false" />
                 </HBox>
 
                 <Button fx:id="nextButton"

@@ -13,14 +13,28 @@ import javafx.stage.Stage;
 
 
 /**
- * JavaFX App
+ * Main class for the Puzzle Palace app.
+ * Starts the JavaFX window and loads FXML screens.
  */
+
 public class App extends Application {
 
+        /** The main app scene. */
     private static Scene scene;
+
+        /** The main app window. */
     private static Stage primaryStage;
+
+        /** Handles app logic. */
     private static final PuzzlePalaceFacade FACADE = new PuzzlePalaceFacade();
 
+
+    /**
+     * Runs when the app starts.
+     *
+     * @param stage main window
+     * @throws IOException if FXML can't be loaded
+     */
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
@@ -39,6 +53,15 @@ public class App extends Application {
         scene.setRoot(loadFXML(fxml));
     }
 
+
+        /**
+     * Loads an FXML file.
+     *
+     * @param fxml file name (without .fxml)
+     * @return loaded layout
+     * @throws IOException if FXML can't be loaded
+     */
+
     private static Parent loadFXML(String fxml) throws IOException {
         // Use absolute path from the classpath root that matches your resources folder
         URL url = App.class.getResource("/com/puzzlepalace/" + fxml + ".fxml");
@@ -54,6 +77,13 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+
+        /**
+     * Gets the main app facade.
+     *
+     * @return facade object
+     */
 
     public static PuzzlePalaceFacade getFacade() {
 

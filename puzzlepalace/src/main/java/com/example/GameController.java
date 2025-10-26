@@ -22,6 +22,8 @@ import javafx.util.Duration;
 
 public class GameController {
 
+    private static final int STANDARD_HINT_LIMIT = 3;
+
     @FXML
     private Label roomTitleLabel;
 
@@ -127,7 +129,7 @@ public class GameController {
         answerField.setDisable(false);
         answerField.clear();
         submitButton.setDisable(false);
-        hintButton.setDisable(activePuzzle.getMaxHints() == 0);
+        hintButton.setDisable(!hasStandardHintsRemaining(activePuzzle));
         nextButton.setVisible(false); // hide by default
         nextButton.setManaged(false);
         nextButton.setDisable(true);
@@ -168,9 +170,16 @@ public class GameController {
         if (activePuzzle == null) {
             return;
         }
+        if (!hasStandardHintsRemaining(activePuzzle)) {
+            if (feedbackLabel != null) {
+                feedbackLabel.setText("You've used all standard hints. Try an extra hint token!");
+            }
+            hintButton.setDisable(true);
+            return;
+        }
         String hint = App.getFacade().requestHint(activePuzzle.getPuzzleId());
         hintLabel.setText(hint);
-        if (!hasRemainingHintsAvailable(activePuzzle)) {
+        if (!hasStandardHintsRemaining(activePuzzle)) {
             hintButton.setDisable(true);
         }
         updateExtraHintButton();
@@ -213,7 +222,7 @@ public class GameController {
                 feedbackLabel.setText(message);
             }
         }
-        if (hintButton != null && !hasRemainingHintsAvailable(activePuzzle)) {
+        if (hintButton != null && !hasStandardHintsRemaining(activePuzzle)) {
             hintButton.setDisable(true);
         }
         updateExtraHintButton();
@@ -433,8 +442,32 @@ public class GameController {
         if (puzzle == null) {
             return false;
         }
-        int effectiveHintsUsed = Math.max(0, puzzle.getHintsUsed());
-        return effectiveHintsUsed < puzzle.getMaxHints();
+        return hasAnyHintsAvailable(puzzle);
+    }
+
+    private boolean hasStandardHintsRemaining(Puzzle puzzle) {
+        if (puzzle == null) {
+            return false;
+        }
+        int maxHints = Math.max(0, puzzle.getMaxHints());
+        if (maxHints == 0) {
+            return false;
+        }
+        int allowed = Math.min(STANDARD_HINT_LIMIT, maxHints);
+        int used = Math.max(0, puzzle.getPenaltyHintsUsed());
+        return used < allowed;
+    }
+
+    private boolean hasAnyHintsAvailable(Puzzle puzzle) {
+        if (puzzle == null) {
+            return false;
+        }
+        int maxHints = Math.max(0, puzzle.getMaxHints());
+        if (maxHints == 0) {
+            return false;
+        }
+        int used = Math.max(0, puzzle.getHintsUsed());
+        return used < maxHints;
     }
 
     private int resolveDifficultyMultiplier(Settings.Difficulty difficulty) {

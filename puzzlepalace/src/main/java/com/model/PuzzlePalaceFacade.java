@@ -232,8 +232,8 @@ public class PuzzlePalaceFacade {
             ),
             new SimplePuzzle(
                 2009,
-                "Sparks swirl into the letters E P A L C E. Arrange them to unlock the study door.",
-                "escape",
+                "Sparks swirl into the letters E P A L C A. Arrange them to unlock the study door.",
+                "Palaceß",
                 "The word describes exactly what you're trying to do.",
                 "It starts and ends with the same letter.",
                 "It contains six letters.",

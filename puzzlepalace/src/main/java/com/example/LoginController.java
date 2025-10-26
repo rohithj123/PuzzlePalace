@@ -10,6 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+
+/**
+ * Simple controller for the login screen.
+ * Handles logging in and going to sign-up/story screens.
+ */
 public class LoginController {
 
     @FXML
@@ -21,6 +26,7 @@ public class LoginController {
     @FXML
     private Label feedbackLabel;
 
+        /** Runs when the view loads. Clears feedback and wires Enter key. */
     @FXML
     private void initialize() {
         feedbackLabel.setText("");
@@ -28,6 +34,7 @@ public class LoginController {
         usernameField.setOnAction(event -> handleLogin());
     }
 
+        /** Try to log in with the entered username/password. */
     @FXML
     private void handleLogin() {
         String username = usernameField.getText();
@@ -48,6 +55,7 @@ public class LoginController {
         }
     }
 
+        /** Open the signup screen. */
     @FXML
     private void handleShowSignup() {
         try {

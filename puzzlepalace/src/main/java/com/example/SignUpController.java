@@ -9,6 +9,10 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
+/**
+ * Handles the sign-up screen.
+ * Lets users create an account or go back to login.
+ */
 public class SignUpController {
 
     @FXML
@@ -23,12 +27,14 @@ public class SignUpController {
     @FXML
     private Label feedbackLabel;
 
+        /** Runs when the screen loads. Sets up default text. */
     @FXML
     private void initialize() {
         feedbackLabel.setText("");
         feedbackLabel.setStyle("-fx-text-fill: crimson;");
     }
 
+    /** Creates a new account if inputs are valid. */
     @FXML
     private void handleCreateAccount() {
         String username = usernameField.getText();
@@ -68,6 +74,7 @@ public class SignUpController {
         confirmPasswordField.clear();
     }
 
+    /** Goes back to the login screen. */
     @FXML
     private void handleBackToLogin() {
         try {

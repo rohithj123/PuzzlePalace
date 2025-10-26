@@ -1,13 +1,14 @@
 package com.example;
 
+import java.io.IOException;
+
 import com.model.Player;
 import com.model.PuzzlePalaceFacade;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
 
 public class LoginController {
 
@@ -41,9 +42,9 @@ public class LoginController {
 
         feedbackLabel.setText("");
         try {
-            App.setRoot("dashboard");
+            App.setRoot("story");
         } catch (IOException e) {
-            feedbackLabel.setText("Unable to open the dashboard view.");
+            feedbackLabel.setText("Unable to open the story view.");
         }
     }
 

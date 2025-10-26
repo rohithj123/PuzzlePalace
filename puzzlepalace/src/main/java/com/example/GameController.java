@@ -53,7 +53,7 @@ public class GameController {
     private Button nextButton;
 
     @FXML
-    private Button freeClueButton;
+    private Button extraHintButton;
 
     @FXML
     private VBox certificateBox;
@@ -117,7 +117,7 @@ public class GameController {
             if (!facade.hasNextRoom()) {
                 showCertificate();
             }
-            updateFreeClueButton();
+            updateExtraHintButton();
             return;
         }
 
@@ -132,7 +132,7 @@ public class GameController {
         nextButton.setManaged(false);
         nextButton.setDisable(true);
 
-        updateFreeClueButton();
+        updateExtraHintButton();
 
         if ("SOLVED".equalsIgnoreCase(activePuzzle.getStatus())) {
             displaySolvedState();
@@ -153,14 +153,14 @@ public class GameController {
         if (solved) {
             StringBuilder message = new StringBuilder("Correct! The door unlocks with a satisfying click.");
             if (activePuzzle.getHintsUsed() == 0) {
-                message.append("\nYou earned a free clue token for solving without hints!");
+                message.append("\nYou earned an extra hint token for solving without hints!");
             }
             feedbackLabel.setText(message.toString());
             displaySolvedState();
         } else {
             feedbackLabel.setText("That's not quite right. Try another combination.");
         }
-        updateFreeClueButton();
+        updateExtraHintButton();
     }
 
     @FXML
@@ -170,10 +170,10 @@ public class GameController {
         }
         String hint = App.getFacade().requestHint(activePuzzle.getPuzzleId());
         hintLabel.setText(hint);
-        if (activePuzzle.getHintsUsed() >= activePuzzle.getMaxHints()) {
+        if (!hasRemainingHintsAvailable(activePuzzle)) {
             hintButton.setDisable(true);
         }
-        updateFreeClueButton();
+        updateExtraHintButton();
     }
 
     @FXML
@@ -184,21 +184,21 @@ public class GameController {
         PuzzlePalaceFacade facade = App.getFacade();
         if (facade == null) {
             if (feedbackLabel != null) {
-                feedbackLabel.setText("Unable to use a free clue token right now.");
+                feedbackLabel.setText("Unable to use an extra hint right now.");
             }
             return;
         }
         HintRequestResult result = facade.useFreeHintToken(activePuzzle.getPuzzleId());
         if (result == null) {
             if (feedbackLabel != null) {
-                feedbackLabel.setText("Unable to use a free clue token right now.");
+                feedbackLabel.setText("Unable to use an extra hint right now.");
             }
-            updateFreeClueButton();
+            updateExtraHintButton();
             return;
         }
         if (result.isSuccess()) {
             if (feedbackLabel != null) {
-                feedbackLabel.setText("Free clue token redeemed!");
+                feedbackLabel.setText("Extra hint unlocked!");
             }
             if (hintLabel != null) {
                 String hintText = result.getMessage();
@@ -207,16 +207,16 @@ public class GameController {
         } else {
             String message = result.getMessage();
             if (message == null || message.isBlank()) {
-                message = "No free clue token available.";
+                message = "No extra hints available.";
             }
             if (feedbackLabel != null) {
                 feedbackLabel.setText(message);
             }
         }
-        if (hintButton != null && activePuzzle.getHintsUsed() >= activePuzzle.getMaxHints()) {
+        if (hintButton != null && !hasRemainingHintsAvailable(activePuzzle)) {
             hintButton.setDisable(true);
         }
-        updateFreeClueButton();
+        updateExtraHintButton();
     }
 
     @FXML
@@ -250,7 +250,7 @@ public class GameController {
         } else {
             hideCertificate();
         }
-        updateFreeClueButton();
+        updateExtraHintButton();
 
     }
 
@@ -405,28 +405,36 @@ public class GameController {
         }
         return total;
     }
-        private void updateFreeClueButton() {
-            if (freeClueButton == null) {
-                return;
-            }
-            PuzzlePalaceFacade facade = App.getFacade();
-            boolean show = facade != null
-                    && activePuzzle != null
-                    && !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus())
-                    && facade.hasFreeHintToken()
-                    && activePuzzle.getHintsUsed() < activePuzzle.getMaxHints();
-            freeClueButton.setVisible(show);
-            freeClueButton.setManaged(show);
-            if (!show) {
-                freeClueButton.setText("Use Free Clue Token");
-                return;
-            }
-            int tokens = Math.max(0, facade.getFreeHintTokenCount());
-            if (tokens > 1) {
-                freeClueButton.setText(String.format("Use Free Clue Token (%d)", tokens));
-            } else {
-                freeClueButton.setText("Use Free Clue Token");
-            }
+    private void updateExtraHintButton() {
+        if (extraHintButton == null) {
+            return;
+        }
+        PuzzlePalaceFacade facade = App.getFacade();
+        boolean show = facade != null
+                && activePuzzle != null
+                && !"SOLVED".equalsIgnoreCase(activePuzzle.getStatus())
+                && facade.hasFreeHintToken()
+                && hasRemainingHintsAvailable(activePuzzle);
+        extraHintButton.setVisible(show);
+        extraHintButton.setManaged(show);
+        if (!show) {
+            extraHintButton.setText("Extra hint");
+            return;
+        }
+        int tokens = Math.max(0, facade.getFreeHintTokenCount());
+        if (tokens > 1) {
+            extraHintButton.setText(String.format("Extra hint (%d)", tokens));
+        } else {
+            extraHintButton.setText("Extra hint");
+        }
+    }
+
+    private boolean hasRemainingHintsAvailable(Puzzle puzzle) {
+        if (puzzle == null) {
+            return false;
+        }
+        int effectiveHintsUsed = Math.max(0, puzzle.getHintsUsed());
+        return effectiveHintsUsed < puzzle.getMaxHints();
     }
 
     private int resolveDifficultyMultiplier(Settings.Difficulty difficulty) {

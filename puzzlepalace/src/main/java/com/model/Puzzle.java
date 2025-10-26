@@ -61,6 +61,11 @@ public abstract class Puzzle {
         return hints == null ? 0 : hints.getPenaltyHintsUsed();
     }
 
+    public int getBonusHintsUsed() {
+        return hints == null ? 0 : hints.getBonusHintsUsed();
+    }
+
+
     public int getMaxHints() {
         return hints == null ? 0 : hints.getMaxHints();
     }

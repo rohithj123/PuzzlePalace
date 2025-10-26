@@ -11,6 +11,7 @@ public class Hint
     private int maxHints = 3;
     private List<String> availableHints = new ArrayList<>();
     private int penaltyHintsUsed;
+    private int bonusHintsUsed;
 
     public Hint() { }
 
@@ -28,8 +29,9 @@ public class Hint
         }
 
         int allowedHints = Math.min(maxHints, availableHints.size());
+        int effectiveHintsUsed = Math.max(0, hintsUsed - Math.max(0, bonusHintsUsed));
 
-        if (hintsUsed >= allowedHints) 
+        if (effectiveHintsUsed >= allowedHints)
         {
             return "All hints have been used.";
         }
@@ -47,8 +49,8 @@ public class Hint
             return false;
         }
         int allowedHints = Math.min(maxHints, availableHints.size());
-        return hintsUsed < allowedHints;
-    }
+        int effectiveHintsUsed = Math.max(0, hintsUsed - Math.max(0, bonusHintsUsed));
+        return effectiveHintsUsed < allowedHints;    }
 
     public synchronized void setAvailableHints(List<String> hints) 
     {
@@ -61,6 +63,8 @@ public class Hint
         }
         this.hintsUsed = 0;
         this.penaltyHintsUsed = 0;
+        this.bonusHintsUsed = 0;
+
     }
 
     public synchronized List<String> getAvailableHintsSnapshot() 
@@ -72,6 +76,8 @@ public class Hint
     {
         this.hintsUsed = 0;
         this.penaltyHintsUsed = 0;
+        this.bonusHintsUsed = 0;
+
     }
 
     public synchronized int getHintsUsed() 
@@ -83,11 +89,21 @@ public class Hint
         return Math.max(0, penaltyHintsUsed);
     }
 
+    public synchronized int getBonusHintsUsed()
+    {
+        return Math.max(0, bonusHintsUsed);
+    }
+
+
     public synchronized void markLastHintFree()
     {
         if (penaltyHintsUsed > 0)
         {
             penaltyHintsUsed--;
+        }
+        if (hintsUsed > 0)
+        {
+            bonusHintsUsed = Math.min(hintsUsed, bonusHintsUsed + 1);
         }
     }
 

@@ -962,7 +962,7 @@ return rooms;
             return new HintRequestResult(false, "No player logged in.", false);
         }
         if (!currentPlayer.consumeFreeHintToken()) {
-            return new HintRequestResult(false, "No free clue tokens available.", false);
+            return new HintRequestResult(false, "No extra hint tokens available.", false);
         }
         Puzzle puzzle = getPuzzle(puzzleId);
         if (puzzle == null) {

@@ -23,19 +23,24 @@
                         <Label text="Welcome to PuzzlePalace" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
 
                         <TextArea
-                            fx:id="storyTextArea"
                             editable="false"
                             wrapText="true"
                             focusTraversable="false"
                             prefRowCount="14"
                             style="-fx-font-size: 16px; -fx-text-fill: black; -fx-control-inner-background: transparent; -fx-background-color: transparent;"
                             text="On a quiet evening, you stumbled upon the ruins of PuzzlePalace, an ancient mansion said to be built by a genius who vanished without a trace. The locals say the place was cursed that anyone who entered never came back. But you had to see it for yourself.
+
 The moment you stepped inside, the doors slammed shut. The sound echoed through the empty halls, and suddenly, the palace woke up.
+
 Candles flickered to life. Strange mechanisms began to hum. And a voice whispered through the corridors:
 “Welcome, traveler. Let’s see if your mind is sharp enough to escape.”
-Now, you’re trapped alone. Every room you enter locks behind you. Each one hides puzzles, riddles, and secrets designed to test your knowledge and courage. The palace shifts as you move, rearranging itself like a living maze.
+
+Now, you’re trapped alone. Every room you enter locks behind you. Each one hides puzzles, riddles, and secrets designed to test your logic and courage. The palace shifts as you move, rearranging itself like a living maze.
+
 You must think fast, observe carefully, and solve the puzzles to unlock the doors that lead deeper inside. The final chamber holds the exit… or perhaps, your fate.
-There are hints, but no allies. Only your wits and the will to escape the PuzzlePalace before it becomes your tomb."/>
+
+There are hints, but no allies. Only your wits and the will to escape the PuzzlePalace before it becomes your tomb.">
+                        </TextArea>
                     </children>
                 </VBox>
             </content>

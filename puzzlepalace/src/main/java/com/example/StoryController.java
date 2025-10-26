@@ -9,6 +9,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
+/**
+ * Controller for the story screen.
+ * Handles reading the story out loud and moving to the next screen.
+ */
 public class StoryController {
 
     @FXML
@@ -19,6 +23,7 @@ public class StoryController {
 
     private Thread speechThread;
 
+    /** Runs when the screen loads. Starts reading the story. */
     @FXML
     private void initialize() {
         if (errorLabel != null) {
@@ -36,7 +41,7 @@ public class StoryController {
             }
         });
     }
-
+    /** Stops the story and goes to the dashboard screen. */
     @FXML
     private void handleNext() {
         if (errorLabel != null) {

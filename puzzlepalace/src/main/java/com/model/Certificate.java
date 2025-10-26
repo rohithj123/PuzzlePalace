@@ -12,7 +12,7 @@ public class Certificate {
     private String scoreSummary;
 
     /**
-     * Default constructor.
+     * This is the default constructor.
      */
 
     public Certificate() {
@@ -45,7 +45,7 @@ public class Certificate {
     }
 
     /**
-     * Displays the certificate details.
+     * This will display the certificate details.
      */
     public void displayCertificate() {
         System.out.println("displayCertificate() called (stub)");

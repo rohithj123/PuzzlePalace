@@ -97,6 +97,7 @@ public class PuzzlePalaceFacade {
         }
 
         List<Room> rooms = createRoomsForDifficulty(getSelectedDifficulty());
+        Collections.shuffle(rooms, random);
         availableRooms.addAll(rooms);
 
         if (!availableRooms.isEmpty()) {

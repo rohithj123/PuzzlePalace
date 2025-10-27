@@ -1,0 +1,14 @@
+playerId=eb22bdb3-3579-4a4d-bc20-05ba63835bfd
+currentRoom=0
+timer=0
+completed=false
+hintsUsed=0
+hintsRemaining=0
+startTime=
+endTime=
+scorePoints=0
+scorePuzzlesSolved=0
+scoreHintsUsed=0
+scoreTimeTaken=0
+scoreFreeHintTokens=0
+availableHints=

@@ -12,38 +12,111 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tracks the ongoing state of a player's session including timing, hints, and
- * persistence to disk for resume functionality.
+ * Tracks the ongoing state of a player's session including timing, hint
+ * management, and simple persistence to disk for resume functionality.
  * 
- * @author Everlast Chigoba
+ * Timer is stored in milliseconds internally and converted to seconds for {@link Score}.
  */
-
-
 public class Progress {
 
+    /**
+     * Current room or stage index for the active session.
+     */
     private int currentRoom;
+
+    /**
+     * Owning player; may be {@code null} for anonymous/default progress.
+     */
     private Player player;
+
+    /**
+     * Accumulated timer in milliseconds. Updated when a game ends using the
+     * difference between {@link #startTime} and {@link #endTime}.
+     */
     private long timer;
+
+    /**
+     * True if the current session has been completed (win/finished).
+     */
     private boolean isCompleted;
+
+    /**
+     * Score object associated with this progress instance.
+     */
     private final Score score;
+
+    /**
+     * Number of hints consumed in the current session.
+     */
     private int hintsUsed;
+
+    /**
+     * Number of hints remaining in the current session (derived from
+     * {@link #availableHints} and {@link #hintsUsed}).
+     */
     private int hintsRemaining;
+
+    /**
+     * List of textual hints available for this game/session. Elements are
+     * considered ordered: each call to {@link #useHint()} returns the next hint
+     * from this list according to {@link #hintsUsed}.
+     */
     private List<String> availableHints;
+
+    /**
+     * Session start time; set by {@link #startGame()} / {@link #beginGame(List)}.
+     */
     private LocalDateTime startTime;
+
+    /**
+     * Session end time; set by {@link #endGame()}.
+     */
     private LocalDateTime endTime;
 
+    /**
+     * Default directory used for storing progress files.
+     */
     private static final String DEFAULT_SAVE_DIR = "data";
+
+    /**
+     * Filename used when no player ID is available.
+     */
     private static final String DEFAULT_SAVE_FILE = "progress-default.txt";
+
+    /**
+     * Delimiter used to join multiple hints when writing to a single key/value
+     * line in the progress file.
+     */
     private static final String HINT_DELIMITER = " ||";
 
+    /**
+     * Constructs a default {@code Progress} instance with no player and no
+     * available hints.
+     */
     public Progress() {
         this(null, null, null);
     }
 
+    /**
+     * Constructs a {@code Progress} associated with the specified player and
+     * optional hint list.
+     *
+     * @param player         owning {@link Player} instance (may be {@code null})
+     * @param availableHints initial list of available hints (may be {@code null})
+     */
     public Progress(Player player, List<String> availableHints) {
         this(player, null, availableHints);
     }
 
+    /**
+     * Full constructor allowing an externally created {@link Score} to be used.
+     * If {@code existingScore} is {@code null} a new {@link Score} is created
+     * and wired back to this {@code Progress} via {@link Score#setProgress(Progress)}.
+     *
+     * @param player        owning {@link Player} (may be {@code null})
+     * @param existingScore optional existing {@link Score} to associate (may be {@code null})
+     * @param availableHints initial available hints list (may be {@code null})
+     */
     public Progress(Player player, Score existingScore, List<String> availableHints) {
         this.currentRoom = 0;
         this.player = player;
@@ -60,23 +133,53 @@ public class Progress {
         resetHints();
     }
 
+    /**
+     * Returns the {@link Score} instance managed by this {@link Progress}.
+     *
+     * @return associated {@link Score}
+     */
     public Score getScore() {
         return score;
     }
 
+    /**
+     * Replace the set of available hints with the provided list and reset the
+     * hint usage counters.
+     *
+     * @param hints new list of hints (may be {@code null} to clear)
+     */
     public void setAvailableHints(List<String> hints) {
         replaceAvailableHints(hints);
     }
+
+    /**
+     * Replaces the available hints list without changing other session state,
+     * then resets hint counters to reflect the new pool.
+     *
+     * @param hints new list of hints (may be {@code null})
+     */
     public void replaceAvailableHints(List<String> hints) {
         setAvailableHintsInternal(hints);
         resetHints();
     }
 
+    /**
+     * Updates the hint pool while preserving {@link #hintsUsed} and adjusts
+     * {@link #hintsRemaining} accordingly.
+     *
+     * @param hints new list of hints (may be {@code null})
+     */
     public void updateHintPool(List<String> hints) {
         setAvailableHintsInternal(hints);
-        hintsRemaining = Math.max(availableHints.size() - hintsUsed, 0);    
+        hintsRemaining = Math.max(availableHints.size() - hintsUsed, 0);
     }
 
+    /**
+     * Begin a new game using the supplied hints. If {@code hints} is {@code null}
+     * the existing hint pool is left unchanged and hint counters are reset.
+     *
+     * @param hints optional list of hints to initialize for the game
+     */
     public void beginGame(List<String> hints) {
         if (hints != null) {
             replaceAvailableHints(hints);
@@ -86,20 +189,28 @@ public class Progress {
         startGame();
     }
 
-
+    /**
+     * Marks the game as started by setting {@link #startTime}, clearing
+     * {@link #endTime}, resetting hint counters, and zeroing the internal
+     * timer and the {@link Score#getTimeTaken()} value.
+     */
     public void startGame() {
         this.startTime = LocalDateTime.now();
         this.endTime = null;
         this.isCompleted = false;
         resetHints();
         this.timer = 0L;
-        
+
         score.setTimeTaken(0);
     }
 
+    /**
+     * Marks the game as ended by setting {@link #endTime}, computing the elapsed
+     * time (in milliseconds) when {@link #startTime} is present, updating the
+     * {@link #isCompleted} flag, and pushing time/hint data into {@link Score}.
+     */
     public void endGame() {
         if (this.startTime == null) {
-
             this.endTime = LocalDateTime.now();
             this.timer = 0L;
         } else {
@@ -111,14 +222,23 @@ public class Progress {
 
         score.setTimeTaken((int) Math.min(Integer.MAX_VALUE, Math.max(0L, timer / 1000L)));
         score.setHintsUsed(hintsUsed);
-        
+
     }
 
+    /**
+     * Returns whether the current session is marked as completed.
+     *
+     * @return {@code true} if completed, otherwise {@code false}
+     */
     public boolean checkWin() {
-        
         return isCompleted;
     }
 
+    /**
+     * Persist the current progress to disk. The file name is derived from the
+     * owning player's UUID if available: {@code data/progress-<playerId>.txt},
+     * otherwise {@code data/progress-default.txt} is used.
+     */
     public void saveProgress() {
         String filename;
         if (player != null && player.getPlayerID() != null) {
@@ -132,7 +252,7 @@ public class Progress {
             Path parent = savePath.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
-            }   
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -181,6 +301,14 @@ public class Progress {
 
     }
 
+    /**
+     * Loads a previously saved progress file if present. File name resolution is
+     * the same as {@link #saveProgress()}. The loader is resilient: unknown
+     * keys are ignored and parsing errors fall back to current values.
+     *
+     * After loading, the {@link #hintsRemaining} and the {@link Score} hint/time
+     * fields are recomputed from loaded values.
+     */
     public void loadProgress() {
         String filename;
         if (player != null && player.getPlayerID() != null) {
@@ -246,7 +374,7 @@ public class Progress {
                     default:
                         break;
                 }
-                
+
             }
             if (availableHints == null) {
                 availableHints = new ArrayList<>();
@@ -259,6 +387,13 @@ public class Progress {
         }
     }
 
+    /**
+     * Returns the next available hint and updates counters. Hints are consumed
+     * in order from {@link #availableHints}. If no hints are available or
+     * {@link #hintsRemaining} is zero this method returns {@code null}.
+     *
+     * @return next hint string or {@code null} if none available
+     */
     public String useHint() {
         if (availableHints == null || availableHints.isEmpty()) {
             return null;
@@ -281,11 +416,15 @@ public class Progress {
         score.setHintsUsed(hintsUsed);
         return hint;
 
-        
+
     }
 
+    /**
+     * Resets the hint usage counters for a fresh session. Does not clear the
+     * hint pool unless the pool is {@code null} in which case an empty pool is created.
+     */
     public void resetHints() {
-        this.hintsUsed = 0; 
+        this.hintsUsed = 0;
         if (availableHints == null) {
             this.availableHints = new ArrayList<>();
             this.hintsRemaining = 0;
@@ -295,6 +434,12 @@ public class Progress {
         score.setHintsUsed(0);
     }
 
+    /**
+     * Internal helper to replace the backing {@link #availableHints} list while
+     * filtering out {@code null} entries.
+     *
+     * @param hints input hints (may be {@code null})
+     */
     private void setAvailableHintsInternal(List<String> hints) {
         if (this.availableHints == null) {
             this.availableHints = new ArrayList<>();
@@ -311,6 +456,13 @@ public class Progress {
         }
     }
 
+    /**
+     * Parse an integer value returning {@code defaultValue} on parse errors.
+     *
+     * @param value        string value to parse
+     * @param defaultValue fallback value if parsing fails
+     * @return parsed integer or {@code defaultValue}
+     */
     private static int parseInt(String value, int defaultValue) {
         try {
             return Integer.parseInt(value);
@@ -319,6 +471,13 @@ public class Progress {
         }
     }
 
+    /**
+     * Parse a long value returning {@code defaultValue} on parse errors.
+     *
+     * @param value        string value to parse
+     * @param defaultValue fallback value if parsing fails
+     * @return parsed long or {@code defaultValue}
+     */
     private static long parseLong(String value, long defaultValue) {
         try {
             return Long.parseLong(value);
@@ -327,6 +486,13 @@ public class Progress {
         }
     }
 
+    /**
+     * Parse a {@link LocalDateTime} from the supplied string, returning {@code null}
+     * if parsing fails.
+     *
+     * @param value string representation of a {@link LocalDateTime}
+     * @return parsed {@link LocalDateTime} or {@code null}
+     */
     private static LocalDateTime parseDateTime(String value) {
         try {
             return LocalDateTime.parse(value);
@@ -335,6 +501,13 @@ public class Progress {
         }
     }
 
+    /**
+     * Parse an available-hints string written with {@link #HINT_DELIMITER} into a
+     * {@link List} of hints. Trims each part and ignores empty segments.
+     *
+     * @param value joined hint string value
+     * @return list of individual hint strings (never {@code null})
+     */
     private List<String> parseHints(String value) {
         List<String> hints = new ArrayList<>();
         if (value == null || value.isEmpty()) {
@@ -349,3 +522,4 @@ public class Progress {
         return hints;
     }
 }
+

@@ -10,11 +10,22 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * This class saves player data to a JSON file.
+ * This helps store user progress, scores, and account information.
+ */
 public class DataWriter {
-
+    /**
+     * This prevents creating an instance of DataWriter.
+     */
     private DataWriter() {
     }
-
+    /**
+     * This saves all player data to a given JSON file path.
+     *
+     * @param players the list of players to save
+     * @param filePath the path of the JSON file to write to
+     */
     public static void saveUsers(List<Player> players, String filePath) {
         JSONArray playerArray = new JSONArray();
 
@@ -85,7 +96,14 @@ public class DataWriter {
             System.out.println("DataWriter: IO error while writing file: " + e.getMessage());
         }
     }
-
+    /**
+     * This safely gets a string value from a method or field.
+     *
+     * @param obj the object to inspect
+     * @param methodName the name of the getter method
+     * @param fieldName the name of the field
+     * @return the value as a string, or an empty string if not found
+     */
     private static String safeGetString(Object obj, String methodName, String fieldName) {
         if (obj == null) return "";
 

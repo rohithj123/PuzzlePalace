@@ -20,6 +20,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 
+
+/**
+ * Controls the dashboard screen.
+ * Handles showing player info, saving progress, and switching views.
+ */
 public class DashboardController {
 
     @FXML
@@ -65,7 +70,7 @@ public class DashboardController {
     @FXML
     private Label difficultyDescriptionLabel;
 
-
+    /** Runs when the dashboard loads. */
     @FXML
     private void initialize() {
         configureDifficultySelector();
@@ -73,6 +78,8 @@ public class DashboardController {
         refreshProgressDetails(PlayerProgressReport.empty());
         refreshPlayerDetails();
     }
+
+        /** Logs out and goes back to the login screen. */
 
     @FXML
     private void handleLogout() {
@@ -94,6 +101,8 @@ public class DashboardController {
         }
     }
 
+        /** Saves player progress and updates the display. */
+
     @FXML
     private void handleSaveProgress() {
         PuzzlePalaceFacade facade = App.getFacade();
@@ -103,6 +112,8 @@ public class DashboardController {
             statusLabel.setText("Progress saved successfully.");
         }
     }
+
+        /** Shows saved player data in the text area. */
 
     @FXML
     private void handleStartPuzzle() {
@@ -142,6 +153,8 @@ public class DashboardController {
             }
         }
     }
+
+        /** Updates labels with current player info. */
 
     private void refreshPlayerDetails() {
         PuzzlePalaceFacade facade = App.getFacade();
@@ -283,6 +296,8 @@ public class DashboardController {
         return mins + "m " + String.format("%02ds", secs);
     }
     
+        /** Sets up the difficulty dropdown box. */
+
     private void configureDifficultySelector() {
         if (difficultyChoiceBox == null) {
             return;
@@ -296,6 +311,9 @@ public class DashboardController {
             updateDifficultyDescription(resolved);
         });
     }
+
+        /** Updates the difficulty description label. */
+
     private void updateDifficultyDescription(Settings.Difficulty difficulty) {
         if (difficultyDescriptionLabel == null) {
             return;

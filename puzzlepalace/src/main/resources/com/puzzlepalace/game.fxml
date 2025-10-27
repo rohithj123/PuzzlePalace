@@ -31,6 +31,16 @@
                 <HBox spacing="12.0" alignment="CENTER">
                     <Button fx:id="submitButton" text="Unlock" onAction="#handleSubmitAnswer" />
                     <Button fx:id="hintButton" text="Need a Hint?" onAction="#handleRequestHint" />
+                    <Button fx:id="extraHintButton"
+                            text="Extra hint"
+                            onAction="#handleUseFreeClueToken"
+                            visible="false"
+                            managed="false" />
+                            <Button fx:id="freezeTimerButton"
+                            text="Freeze Timer"
+                            onAction="#handleFreezeTimer"
+                            visible="false"
+                            managed="false" />
                 </HBox>
 
                 <Button fx:id="nextButton"

@@ -81,6 +81,8 @@ public class Player {
      * Lock object for synchronizing access to {@link #puzzleProgress}.
      */
     private final Object progressLock = new Object();
+    private final Object freezeTimerLock = new Object();
+    private int freezeTimerCharges;
 
     /**
      * Creates a new guest player with generated UUID and guest alias.
@@ -127,6 +129,7 @@ public class Player {
         } else {
             this.passwordHash = null;
         }
+        this.freezeTimerCharges = 0;
     }
 
     /**
@@ -603,13 +606,44 @@ public class Player {
         return score == null ? 0 : Math.max(0, score.getFreeHintTokens());
     }
 
-    /**
-     * Records time spent (seconds) into the player's score. Non-positive
-     * seconds are ignored. Accumulation is clamped to
-     * {@link Integer#MAX_VALUE}.
-     *
-     * @param seconds number of seconds to add
-     */
+    public boolean hasFreezeTimerCharges() {
+        synchronized (freezeTimerLock) {
+            return freezeTimerCharges > 0;
+        }
+    }
+
+    public int getFreezeTimerCharges() {
+        synchronized (freezeTimerLock) {
+            return freezeTimerCharges;
+        }
+    }
+
+    public boolean addFreezeTimerCharge() {
+        synchronized (freezeTimerLock) {
+            if (freezeTimerCharges >= Integer.MAX_VALUE) {
+                return false;
+            }
+            freezeTimerCharges++;
+            return true;
+        }
+    }
+
+    public boolean consumeFreezeTimerCharge() {
+        synchronized (freezeTimerLock) {
+            if (freezeTimerCharges <= 0) {
+                return false;
+            }
+            freezeTimerCharges--;
+            return true;
+        }
+    }
+
+    public void setFreezeTimerCharges(int charges) {
+        synchronized (freezeTimerLock) {
+            this.freezeTimerCharges = Math.max(0, charges);
+        }
+    }
+
     public void recordTimeSpent(int seconds) {
         if (seconds <= 0) {
             return;

@@ -6,18 +6,34 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * This represents an escape room in the game.
+ * This stores the room's ID, name, description, puzzles, and exits.
+ */
+
 public class EscapeRoom {
     private UUID roomID;
     private String name;
     private String description;
     private final List<Puzzle> puzzles;
     private final List<String> exits;
-
+   
+    /**
+     * This creates a new empty escape room.
+     */
     public EscapeRoom() {
         this.puzzles = new ArrayList<>();
         this.exits = new ArrayList<>();
     }
-
+    /**
+     * This creates a new escape room with details.
+     *
+     * @param roomID the room ID
+     * @param name the name of the room
+     * @param description the description of the room
+     * @param puzzles the list of puzzles in the room
+     * @param exits the list of exits in the room
+     */
     public EscapeRoom(UUID roomID, String name, String description, List<Puzzle> puzzles, List<String> exits) {
         this();
         this.roomID = roomID;
@@ -30,15 +46,27 @@ public class EscapeRoom {
             this.exits.addAll(exits);
         }
     }
-
+    /**
+     * This returns the room ID.
+     *
+     * @return the room ID
+     */
     public UUID getRoomID() {
         return roomID;
     }
-
+    /**
+     * This returns the name of the room.
+     *
+     * @return the room name
+     */
     public String getName() {
         return name;
     }
-
+    /**
+     * This returns the description of the room.
+     *
+     * @return the room description
+     */
     public String getDescription() {
         return description;
     }
@@ -64,7 +92,6 @@ public class EscapeRoom {
     public void loadRoom(UUID id) {
         if (id == null) return;
         this.roomID = id;
-        // TODO: populate name/description/puzzles/exits from a data source if available
     }
 
     /**

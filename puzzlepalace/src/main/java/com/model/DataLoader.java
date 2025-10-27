@@ -13,9 +13,19 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+/**
+ * This class loads player data from a JSON file.
+ * This helps restore player information, progress, and scores into the game.
+ */
+
 public class DataLoader {
 
-    // Static method so you can call DataLoader.loadUsers("file.json")
+    /**
+     * This loads all player data from a given JSON file path.
+     *
+     * @param filePath the path to the JSON file
+     * @return a list of players loaded from the file
+     */
     public static List<Player> loadUsers(String filePath) {
         List<Player> players = new ArrayList<>();
         File f = new File(filePath);
@@ -104,6 +114,12 @@ public class DataLoader {
         return players;
     }
 
+    /**
+     * This safely converts an object to an integer.
+     *
+     * @param value the object to convert
+     * @return the integer value, or 0 if invalid
+     */
     private static int parseInt(Object value) {
         if (value == null) {
             return 0;
@@ -118,6 +134,12 @@ public class DataLoader {
         }
     }
 
+    /**
+     * This safely converts an object to a LocalDateTime.
+     *
+     * @param value the object to convert
+     * @return the LocalDateTime value, or null if invalid
+     */
     private static LocalDateTime parseDateTime(Object value) {
         if (value == null) {
             return null;

@@ -5,3 +5,5 @@ Puzzle Palace is an interactive game designed for the ages 12 and above, where p
 Requirements Doc: https://docs.google.com/document/d/1BukuRvO0nbyvqkg1pa_EgKM-Tq1V4GttnO6nNxQoObA/edit?usp=sharing
 
 Lucid Chart: https://lucid.app/lucidchart/84f99d93-9acb-4c8c-b32c-32d9988d6780/edit?existing=1&docId=84f99d93-9acb-4c8c-b32c-32d9988d6780&shared=true&invitationId=inv_4c6dcc3d-dae5-4f4f-b107-311738ba6adf&page=0_0#
+
+Youtube Video Demonstration: https://youtu.be/4b0KFdemqks

@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Random;
 
 
-
+/**
+ * Facade for the Puzzle Palace game logic.
+ */
 public class PuzzlePalaceFacade {
 
     private static final int FREEZE_TIMER_DURATION_SECONDS = 10;
@@ -35,10 +37,16 @@ public class PuzzlePalaceFacade {
     private long freezeStartElapsedSeconds;
     private long freezeCompensationSeconds;
 
+    /**
+     * Create a PuzzlePalaceFacade using the default user data path ("json/users.json").
+     */
     public PuzzlePalaceFacade() {
         this("json/users.json");
     }
 
+    /**
+     * Create a PuzzlePalaceFacade with a custom path for user data storage.
+     */
     public PuzzlePalaceFacade(String userDataPath) {
         this.playerManager = new PlayerManager();
         this.userDataPath = userDataPath;
@@ -65,6 +73,9 @@ public class PuzzlePalaceFacade {
         playerManager.addPlayer(fallback);
     }
 
+    /**
+     * Authenticate and log a user in.
+     */
     public Player login(String userName, String password) {
         Player authenticated = playerManager.authenticate(userName, password);
         if (authenticated == null) {
@@ -730,6 +741,10 @@ public class PuzzlePalaceFacade {
     }
     
 
+    /**
+     * Log out the current player and persist their progress.
+     * After logout, the facade has no current player.
+     */
     public void logout() {
         saveCurrentPlayerProgress();
         if (currentPlayer != null) {
@@ -744,6 +759,9 @@ public class PuzzlePalaceFacade {
         puzzleStartTime = null;
     }
 
+    /**
+     * Create a new player account and persist it.
+     */
     public Player createAccount(String userName, String password) {
         if (userName == null || userName.isBlank() || password == null || password.isBlank()) {
             return null;
@@ -830,6 +848,9 @@ public class PuzzlePalaceFacade {
         resetFreezeState();
     }
 
+    /**
+     * Get the currently active room (may be null if no player or no rooms).
+     */
     public Room getCurrentRoom() {
         if (currentPlayer == null) {
             return null;
@@ -840,10 +861,16 @@ public class PuzzlePalaceFacade {
         return currentRoom;
     }
 
+    /**
+     * Return the currently logged-in player (may be null).
+     */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Get the currently active puzzle. Ensures the puzzle timer is started when appropriate.
+     */
     public Puzzle getActivePuzzle() {
         if (activePuzzle == null) {
             Room room = getCurrentRoom();
@@ -874,6 +901,9 @@ public class PuzzlePalaceFacade {
         }
     }
 
+    /**
+     * Get the elapsed seconds for the active puzzle (accounts for freeze compensation).
+     */
     public long getActivePuzzleElapsedSeconds() {
         if (puzzleStartTime == null) {
             return 0L;
@@ -981,6 +1011,9 @@ public class PuzzlePalaceFacade {
         resetFreezeState();
         consecutiveHintFreeSolves = 0;
     }
+    /**
+     * Submit an answer for a puzzle.
+     */
     public boolean submitPuzzleAnswer(int puzzleId, String answer) {
         Puzzle puzzle = getPuzzle(puzzleId);
         if (puzzle == null) {
@@ -1033,6 +1066,10 @@ public class PuzzlePalaceFacade {
         return playerManager.getAllPlayers();
     }
 
+    /**
+     * Persist current player's progress and update their score metadata.
+     * Safe to call when no player is logged in (no-op).
+     */
     public void saveCurrentPlayerProgress() {
         
         if (currentPlayer == null) {
@@ -1047,6 +1084,9 @@ public class PuzzlePalaceFacade {
         DataWriter.saveUsers(playerManager.getAllPlayers(), userDataPath);
     }
 
+    /**
+     * Request the next hint for a puzzle and record usage for the current player.
+     */
     public String requestHint(int puzzleId) {
         Puzzle puzzle = getPuzzle(puzzleId);
         if (puzzle == null) {
@@ -1059,14 +1099,23 @@ public class PuzzlePalaceFacade {
         return hint;
     }
 
+    /**
+     * Check whether the current player has any free hint tokens.
+     */
     public boolean hasFreeHintToken() {
         return currentPlayer != null && currentPlayer.hasFreeHintTokens();
     }
 
+      /**
+     * Get the number of free hint tokens the current player has.
+     */
     public int getFreeHintTokenCount() {
         return currentPlayer == null ? 0 : currentPlayer.getFreeHintTokenCount();
     }
 
+    /**
+     * Consume one free hint token to get a hint without penalty.
+     */
     public HintRequestResult useFreeHintToken(int puzzleId) {
         if (currentPlayer == null) {
             return new HintRequestResult(false, "No player logged in.", false);
@@ -1093,10 +1142,16 @@ public class PuzzlePalaceFacade {
         return new HintRequestResult(true, hint, true);
     }
 
+    /**
+     * Determine if the currently logged-in player has freeze timer charges.
+     */
     public boolean hasFreezeTimerCharge() {
         return currentPlayer != null && currentPlayer.hasFreezeTimerCharges();
     }
 
+    /**
+     * Count of freeze timer charges the current player holds.
+     */
     public int getFreezeTimerChargeCount() {
         return currentPlayer == null ? 0 : Math.max(0, currentPlayer.getFreezeTimerCharges());
     }
@@ -1123,6 +1178,9 @@ public class PuzzlePalaceFacade {
         return !hasNextRoom() && currentRoomIndex >= 0 && currentRoomIndex < availableRooms.size();
     }
 
+    /**
+     * Check whether a freeze timer item is usable right now for the active puzzle.
+     */
     public boolean canUseFreezeTimerItem() {
         if (!isOnFinalPuzzle()) {
             return false;
@@ -1137,6 +1195,9 @@ public class PuzzlePalaceFacade {
         return puzzleStartTime != null;
     }
 
+    /**
+     * Activate the freeze timer which pauses the active puzzle's elapsed time for a short window.
+     */
     public boolean activateFreezeTimer() {
         if (!canUseFreezeTimerItem()) {
             return false;
@@ -1166,6 +1227,10 @@ public class PuzzlePalaceFacade {
         return normalized.equalsIgnoreCase("No hints available.")
                 || normalized.equalsIgnoreCase("All hints have been used.");    }
 
+
+    /**
+     * Build and return a lightweight progress report for the current player.
+     */
     public PlayerProgressReport getCurrentPlayerProgressReport() {
         if (currentPlayer == null) {
             return PlayerProgressReport.empty();
@@ -1192,6 +1257,9 @@ public class PuzzlePalaceFacade {
         return new PlayerProgressReport(percent, solved, totalPuzzles, snapshots);
     }
 
+    /**
+     * Read the raw contents of the user data file.
+     */
     public String readUserDataFileContents() {
         Path path = Paths.get(userDataPath);
         try {
@@ -1208,6 +1276,10 @@ public class PuzzlePalaceFacade {
         return userDataPath;
     }
 
+    /**
+     * Start or (re)build the available rooms for the currently logged-in player.
+     * If no player is logged in this clears available rooms/state.
+     */
     public void startEscapeRoom() {
         if (currentPlayer == null) {
             availableRooms.clear();

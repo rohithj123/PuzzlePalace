@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a mathematical puzzle that can be solved by evaluating equations or expressions.
+ * Supports hints and variable-based answers.
+ */
 public class MathPuzzle 
 {
 
@@ -14,12 +18,18 @@ public class MathPuzzle
     private List<String> hints;
     private int hintsUsed;
 
+    /** 
+     * Creates an empty MathPuzzle with no question or answer. 
+     */
     public MathPuzzle() 
     {
         this.hints = new ArrayList<>();
         this.hintsUsed = 0;
     }
 
+    /**
+     * Creates a MathPuzzle with a question and an expected answer.
+     */ 
     public MathPuzzle(int puzzleId, String question, String answer) 
     {
         this();
@@ -28,6 +38,9 @@ public class MathPuzzle
         this.answer = answer;
     }
 
+    /**
+     * Checks if the stored answer correctly solves the puzzle.
+     */
     public boolean checkAnswer() 
     {
         if (answer == null || question == null) return false;
@@ -35,6 +48,9 @@ public class MathPuzzle
         return checkAnswer(vars);
     }
 
+    /**
+     * Checks the puzzle solution using provided variable values.
+     */
     public boolean checkAnswer(Map<String, Double> variables) 
     {
         try {
@@ -51,18 +67,27 @@ public class MathPuzzle
         }
     }
 
+    /**
+     * Checks if a user-provided answer solves the puzzle.
+     */
     public boolean checkAnswer(String userAnswer) 
     {
         this.answer = userAnswer;
         return checkAnswer();
     }
 
+    /**
+     * Evaluates a mathematical expression using given variable values.
+     */
     private double evaluate(String expr, Map<String, Double> vars) 
     {
         expr = expr.replaceAll("\\s+", "");
         return new Parser(expr, vars).parseExpression();
     }
 
+    /**
+     * Simple mathematical expression parser for evaluating basic arithmetic with variables.
+     */
     private static class Parser 
     {
         private final String input;
@@ -145,19 +170,27 @@ public class MathPuzzle
         }
     }
 
+    /**
+     * Returns the next available hint for the puzzle.
+     */
     public String getHint() 
     {
         if (hints == null || hints.isEmpty()) return "No hints available.";
         if (hintsUsed >= hints.size()) return "All hints have been used.";
         return hints.get(hintsUsed++);
     }
-
+    /** 
+     * Resets the puzzle answer and hint usage count. 
+     */
     public void resetPuzzle() 
     {
         this.answer = null;
         this.hintsUsed = 0;
     }
 
+    /**
+     * Parses a variable assignment string (e.g., "x=5,y=2") into a map.
+     */
     private Map<String, Double> parseAnswerString(String str) 
     {
         Map<String, Double> map = new HashMap<>();
@@ -177,19 +210,26 @@ public class MathPuzzle
         return map;
     }
 
+    /** return the puzzle ID */
     public int getPuzzleId() { return puzzleId; }
     public void setPuzzleId(int puzzleId) { this.puzzleId = puzzleId; }
-
+    
+    /** return the puzzle question */
     public String getQuestion() { return question; }
     public void setQuestion(String question) { this.question = question; }
-
+    
+    /** return the current answer */
     public String getAnswer() { return answer; }
     public void setAnswer(String answer) { this.answer = answer; }
 
+    /** return the list of hints */
     public List<String> getHints() { return hints; }
     public void setHints(List<String> hints) { this.hints = hints; }
 
 
+    /**
+     * Evaluates a user's answer against the puzzle question using a separate evaluator class.
+     */
 public String evaluateSolution(String userAnswer) 
 {
     MathPuzzleEvaluateSolution evaluator = new MathPuzzleEvaluateSolution();

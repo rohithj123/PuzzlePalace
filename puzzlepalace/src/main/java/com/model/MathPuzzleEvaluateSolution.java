@@ -2,9 +2,16 @@ package com.model;
 
 import java.util.Map;
 
+/**
+ * Evaluates whether a given answer (a number or variable assignments) satisfies
+ * a mathematical equation of the form "expression = expression".
+ */
 public class MathPuzzleEvaluateSolution 
 {
-
+    /** 
+     * Evaluates an equation using a single numeric answer. The numeric answer is
+     * bound to variable "x" and then evaluated.
+     */
     public String evaluateSolution(String equation, String userAnswer) 
     {
         if (equation == null || equation.isBlank()) return "No equation provided.";
@@ -21,6 +28,9 @@ public class MathPuzzleEvaluateSolution
         }
     }
 
+    /**
+     * Evaluates an equation using a map of variable assignments.
+     */
     public String evaluateSolution(String equation, Map<String, Double> variables) 
     {
         if (equation == null || equation.isBlank()) return "No equation provided.";
@@ -47,12 +57,19 @@ public class MathPuzzleEvaluateSolution
         }
     }
 
+    /**
+     * Helper to evaluate a numeric expression string using provided variables.
+     */
     private double evaluate(String expr, Map<String, Double> vars) 
     {
         expr = expr.replaceAll("\\s+", "");
         return new Parser(expr, vars).parseExpression();
     }
 
+    /**
+     * Small recursive-descent parser for basic arithmetic expressions:
+     * supports +, -, *, /, ^, parentheses, numbers and variables.
+     */
     private static class Parser 
     {
         private final String input;

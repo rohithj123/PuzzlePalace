@@ -1,18 +1,17 @@
 package com.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class ProgressTest {
 
     @Test
-    public void beginGameInitialisesHintsAndStartTime() {
+    public void beginGame_initialisesHintsAndStartTime() {
         Progress progress = new Progress();
         progress.beginGame(List.of("Alpha", "Beta"));
 
@@ -23,7 +22,7 @@ public class ProgressTest {
     }
 
     @Test
-    public void updateHintPoolAdjustsRemainingHints() {
+    public void updateHintPool_adjustsRemainingHints() {
         Progress progress = new Progress();
         progress.beginGame(Arrays.asList("A", "B"));
         assertEquals("A", progress.useHint());
@@ -36,7 +35,7 @@ public class ProgressTest {
     }
 
     @Test
-    public void updateHintPoolWithNullClearsHints() {
+    public void updateHintPool_withNullClearsHints() {
         Progress progress = new Progress();
         progress.beginGame(List.of("Hint"));
         progress.updateHintPool(null);
@@ -46,7 +45,7 @@ public class ProgressTest {
     }
 
     @Test
-    public void resetHintsReplenishesPool() {
+    public void resetHints_replenishesPool() {
         Progress progress = new Progress();
         progress.beginGame(List.of("One", "Two"));
         progress.useHint();
@@ -56,10 +55,31 @@ public class ProgressTest {
     }
 
     @Test
-    public void endGameRecordsElapsedTimeEvenWithoutStart() {
+    public void endGame_recordsElapsedTimeEvenWithoutStart() {
         Progress progress = new Progress();
         progress.endGame();
+
         assertTrue(progress.checkWin());
         assertEquals(0, progress.getScore().getTimeTaken());
+    }
+
+    @Test
+    public void beginGame_withEmptyHintListBehavesGracefully() {
+        Progress progress = new Progress();
+        progress.beginGame(List.of());
+        assertNull(progress.useHint());
+        assertEquals(0, progress.getScore().getHintsUsed());
+    }
+
+    @Test
+    public void updateHintPool_replacesExistingHintsCorrectly() {
+        Progress progress = new Progress();
+        progress.beginGame(List.of("OldHint"));
+        assertEquals("OldHint", progress.useHint());
+
+        progress.updateHintPool(List.of("NewHint1", "NewHint2"));
+        assertEquals("NewHint1", progress.useHint());
+        assertEquals("NewHint2", progress.useHint());
+        assertNull(progress.useHint());
     }
 }

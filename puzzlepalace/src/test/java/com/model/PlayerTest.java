@@ -1,11 +1,10 @@
 package com.model;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 
 public class PlayerTest {
@@ -27,7 +26,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void guestLoginAssignsCredentials() {
+    public void guestLogin_assignsCredentialsProperly() {
         Player guest = new Player();
         String alias = guest.getUsername();
         assertTrue(guest.isGuest());
@@ -40,7 +39,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void inventoryOperationsMatchByIdOrName() {
+    public void inventoryOperations_matchByIdOrName() {
         Player player = new Player("Dana", "d@example.com", "pw");
         Item keycard = new Item(101, "Keycard");
         player.addItem(keycard);
@@ -52,7 +51,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void recordPuzzleCompletionCreatesSnapshotsAndCounts() {
+    public void recordPuzzleCompletion_createsSnapshotsAndCounts() {
         Player player = new Player("Casey", "c@example.com", "pass");
         SolvablePuzzle puzzle = new SolvablePuzzle(7, "answer");
 
@@ -60,24 +59,24 @@ public class PlayerTest {
         assertEquals(1, player.getPuzzleProgressSnapshots().size());
         assertEquals(1, player.getSolvedPuzzleCountFromHistory());
 
-        // Calling again should not increment solved count
         assertFalse(player.recordPuzzleCompletion(puzzle, "answer"));
         assertEquals(1, player.getSolvedPuzzleCountFromHistory());
     }
 
     @Test
-    public void recordHintUsedAggregatesTotals() {
+    public void recordHintUsed_aggregatesTotals() {
         Player player = new Player("Evan", "e@example.com", "pw");
         SolvablePuzzle puzzle = new SolvablePuzzle(8, "open");
 
         player.recordHintUsed(puzzle, " First hint ");
         player.recordHintUsed(puzzle, null);
+
         assertEquals(1, player.getTotalHintsUsedFromHistory());
         assertEquals(1, player.getScoreDetails().getHintsUsed());
     }
 
     @Test
-    public void tokenAndFreezeTimerManagementWorks() {
+    public void tokenAndFreezeTimer_managementWorks() {
         Player player = new Player("Fran", "f@example.com", "pw");
 
         assertFalse(player.hasFreeHintTokens());
@@ -93,7 +92,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void recordTimeSpentAccumulatesAndClamps() {
+    public void recordTimeSpent_accumulatesAndClampsProperly() {
         Player player = new Player("Gale", "g@example.com", "pw");
         player.recordTimeSpent(5);
         assertEquals(5, player.getScoreDetails().getTimeTaken());
@@ -103,7 +102,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void solvePuzzleDelegatesAndUpdatesScore() {
+    public void solvePuzzle_delegatesAndUpdatesScore() {
         Player player = new Player("Harper", "h@example.com", "pw");
         SolvablePuzzle puzzle = new SolvablePuzzle(15, "code");
 

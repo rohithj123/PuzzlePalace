@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.model.SimplePuzzleTest" time="0.016" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace/target/test-classes:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/en_us/1.0/en_us-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmu_us_kal/1.0/cmu_us_kal-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmulex/1.0/cmulex-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmudict04/1.0/cmudict04-1.0.jar:/Users/mehulbellukutty/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/mehulbellukutty/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21.jar:"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="24"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="/Users/mehulbellukutty/Downloads/Oracle_JDK-24.jdk/Contents/Home/lib"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace/target/surefire 2025-11-02T21-07-50_876-jvmRun1 surefire-20251102210750970_1tmp surefire_0-20251102210750970_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="com.model.SimplePuzzleTest"/>
+    <property name="surefire.test.class.path" value="/Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace/target/test-classes:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/en_us/1.0/en_us-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmu_us_kal/1.0/cmu_us_kal-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmulex/1.0/cmulex-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmudict04/1.0/cmudict04-1.0.jar:/Users/mehulbellukutty/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/mehulbellukutty/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/mehulbellukutty"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="jdk.module.path" value="/Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace/target/classes:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/freetts/1.0/freetts-1.0.jar:/Users/mehulbellukutty/.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21-mac-aarch64.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21-mac-aarch64.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21-mac-aarch64.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21-mac-aarch64.jar"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="/Users/mehulbellukutty/Downloads/Oracle_JDK-24.jdk/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/surefire-booter/3.2.5/surefire-booter-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/surefire-api/3.2.5/surefire-api-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/surefire-logger-api/3.2.5/surefire-logger-api-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/surefire-shared-utils/3.2.5/surefire-shared-utils-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/surefire-extensions-spi/3.2.5/surefire-extensions-spi-3.2.5.jar:/Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace/target/test-classes:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/en_us/1.0/en_us-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmu_us_kal/1.0/cmu_us_kal-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmulex/1.0/cmulex-1.0.jar:/Users/mehulbellukutty/.m2/repository/org/mobicents/external/freetts/cmudict04/1.0/cmudict04-1.0.jar:/Users/mehulbellukutty/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/mehulbellukutty/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21.jar:/Users/mehulbellukutty/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/surefire-junit4/3.2.5/surefire-junit4-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/common-java5/3.2.5/common-java5-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/common-junit3/3.2.5/common-junit3-3.2.5.jar:/Users/mehulbellukutty/.m2/repository/org/apache/maven/surefire/common-junit4/3.2.5/common-junit4-3.2.5.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="24.0.2+12-54"/>
+    <property name="user.name" value="mehulbellukutty"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="15.6"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="maven.ext.class.path" value="/Users/mehulbellukutty/.vscode/extensions/oracle.oracle-java-24.1.2/nbcode/java/maven-nblib/netbeans-eventspy.jar"/>
+    <property name="localRepository" value="/Users/mehulbellukutty/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/var/folders/95/2fk0gn014mq2ppwhms0v06m40000gn/T/"/>
+    <property name="java.version" value="24.0.2"/>
+    <property name="user.dir" value="/Users/mehulbellukutty/PuzzlePalace-17/puzzlepalace"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/mehulbellukutty/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="24.0.2+12-54"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="68.0"/>
+  </properties>
+  <testcase name="trySolveMarksPuzzleSolvedWhenAnswerMatches" classname="com.model.SimplePuzzleTest" time="0.002"/>
+  <testcase name="trySolveMarksAttemptedWhenAnswerIncorrect" classname="com.model.SimplePuzzleTest" time="0.0"/>
+  <testcase name="provideHintDelegatesToHintPool" classname="com.model.SimplePuzzleTest" time="0.0"/>
+  <testcase name="resetPuzzleClearsStatusAndHintUsage" classname="com.model.SimplePuzzleTest" time="0.0"/>
+</testsuite>

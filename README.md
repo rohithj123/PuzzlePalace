@@ -6,8 +6,10 @@ Requirements Doc: https://docs.google.com/document/d/1BukuRvO0nbyvqkg1pa_EgKM-Tq
 
 Lucid Chart: https://lucid.app/lucidchart/84f99d93-9acb-4c8c-b32c-32d9988d6780/edit?existing=1&docId=84f99d93-9acb-4c8c-b32c-32d9988d6780&shared=true&invitationId=inv_4c6dcc3d-dae5-4f4f-b107-311738ba6adf&page=0_0#
 
-Youtube Video Demonstration: https://youtu.be/4b0KFdemqks
+Youtube Video Walkthrough: https://youtu.be/4b0KFdemqks
 
 High Fidelity Live Prototype: https://rohithj123.github.io/PuzzlePalace/
 
-Youtube Video Prototype Walkthrough: https://youtu.be/hdd6lLdcGNo
+Youtube Video Prototype Walkthrough Version 1: https://youtu.be/hdd6lLdcGNo
+
+Youtube Video Prototype Walkthrough Version 2: https://youtu.be/rn_RI7boV5o

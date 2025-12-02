@@ -1,0 +1,19 @@
+.root {
+    -fx-background-image:url("images/castle.jpg");
+    -fx-background-position: center;
+}
+
+.title {
+    -fx-font-size:32pt;
+    -fx-text-fill: #4B0082;
+    -fx-font-weight:bold;
+}
+
+.button {
+    -fx-background-color: #0e6bf6;
+    -fx-text-fill: white;
+    -fx-font-size: 14pt;
+    -fx-padding: 10 20 10 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}

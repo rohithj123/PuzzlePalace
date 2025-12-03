@@ -1,6 +1,8 @@
 package com.example;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.model.Player;
 import com.model.PlayerProgressReport;
@@ -9,11 +11,7 @@ import com.model.PuzzleProgressSnapshot;
 import com.model.Score;
 import com.model.Settings;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -262,7 +260,7 @@ public class DashboardController {
         if (question == null || question.isBlank()) {
             return "Puzzle " + snapshot.getPuzzleId();
         }
-        String cleaned = question.replaceAll("\\s+", " ").trim();
+        String cleaned = question.replaceAll("\s+", " ").trim();
         return cleaned.length() > 80 ? cleaned.substring(0, 77) + "..." : cleaned;
     }
 
@@ -283,6 +281,8 @@ public class DashboardController {
         }
         return content.startsWith("Save file not found") || content.startsWith("Unable to read");
     }
+
+    
 
     private String formatTime(int seconds) {
         if (seconds <= 0) {

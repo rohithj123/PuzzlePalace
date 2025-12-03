@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -9,50 +10,60 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.DashboardController">
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.DashboardController">
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="12.0">
             <padding>
-                <Insets top="20" right="30" bottom="10" left="30" />
+                <Insets bottom="10" left="30" right="30" top="20" />
             </padding>
-            <Button text="Save Progress" onAction="#handleSaveProgress" />
-            <Button text="Logout" onAction="#handleLogout" />
+            <Button onAction="#handleSaveProgress" text="Save Progress" />
+            <Button onAction="#handleLogout" text="Logout" />
         </HBox>
     </top>
+
     <center>
         <VBox alignment="CENTER" spacing="16.0">
             <padding>
-                <Insets top="30" right="40" bottom="30" left="40" />
+                <Insets bottom="30" left="40" right="40" top="30" />
             </padding>
+
             <Label fx:id="welcomeLabel" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
-            <Label fx:id="statusLabel" style="-fx-font-size: 16px;" wrapText="true" maxWidth="520" />
-            <Label fx:id="puzzleStatusLabel" style="-fx-font-size: 16px; -fx-text-fill: #1d3557;" wrapText="true" maxWidth="520" />
+            <Label fx:id="statusLabel" maxWidth="520" style="-fx-font-size: 16px;" textFill="#eb8109" wrapText="true" />
+            <Label fx:id="puzzleStatusLabel" maxWidth="520" style="-fx-font-size: 16px; -fx-text-fill: #1d3557;" textFill="#f57f09" wrapText="true" />
             <VBox alignment="CENTER" spacing="8.0">
-                <Label text="Choose your difficulty:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Choose your difficulty:" textFill="#f88109">
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
+               </font></Label>
                 <ChoiceBox fx:id="difficultyChoiceBox" prefWidth="220.0" />
-                <Label fx:id="difficultyDescriptionLabel" wrapText="true" maxWidth="420" style="-fx-font-size: 14px; -fx-text-fill: #1d3557;" />
+                <Label fx:id="difficultyDescriptionLabel" maxWidth="420" style="-fx-font-size: 14px; -fx-text-fill: #1d3557;" textFill="#f87807" wrapText="true" />
             </VBox>
-            <HBox spacing="24.0" alignment="CENTER">
-                <VBox spacing="10.0" alignment="CENTER_LEFT" maxWidth="320">
+            <HBox alignment="CENTER" spacing="24.0">
+                <VBox alignment="CENTER_LEFT" maxWidth="320" spacing="10.0">
                     <Label fx:id="scoreLabel" style="-fx-font-size: 18px;" />
                     <Label fx:id="puzzlesSolvedLabel" style="-fx-font-size: 18px;" />
                     <Label fx:id="hintsUsedLabel" style="-fx-font-size: 18px;" />
                     <Label fx:id="timeTakenLabel" style="-fx-font-size: 18px;" />
                     <Label fx:id="completionLabel" style="-fx-font-size: 18px;" />
                 </VBox>
-                <VBox spacing="8.0" alignment="TOP_LEFT" maxWidth="360">
-                    <Label text="Answered Questions" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                    <ListView fx:id="answeredQuestionsList" prefHeight="150.0" prefWidth="340.0" />
-                    <Label text="Hints Used" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                    <ListView fx:id="hintUsageList" prefHeight="150.0" prefWidth="340.0" />
+                <VBox alignment="TOP_LEFT" maxWidth="360" spacing="8.0">
+                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Answered Questions" textFill="#f28706" />
+                    <ListView fx:id="answeredQuestionsList" prefHeight="122.0" prefWidth="340.0" />
+                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Hints Used" textFill="#f59d02" />
+                    <ListView fx:id="hintUsageList" prefHeight="114.0" prefWidth="340.0" />
                 </VBox>
-            </HBox>
-            <Button text="Start Selected Challenge" onAction="#handleStartPuzzle" />
-            <Button text="Show Saved Data" onAction="#handleShowSavedData" />
-            <Label fx:id="saveFileStatusLabel" wrapText="true" maxWidth="540" />
-            <TextArea fx:id="saveFilePreview" editable="false" visible="false" managed="false" wrapText="true" prefWidth="560" prefHeight="200" style="-fx-font-family: 'Consolas'; -fx-font-size: 12px;" />
+
+                </HBox>
+            <Button onAction="#handleShowSavedData" prefHeight="31.0" prefWidth="180.0" text="Show Saved Data" />
+            <Button onAction="#handleStartPuzzle" prefHeight="18.0" prefWidth="237.0" text="Start Selected Challenge" />
+            <Label fx:id="saveFileStatusLabel" maxWidth="540" wrapText="true" />
+            <TextArea fx:id="saveFilePreview" editable="false" managed="false" prefHeight="200" prefWidth="560" style="-fx-font-family: 'Consolas'; -fx-font-size: 12px;" visible="false" wrapText="true" />
+
         </VBox>
     </center>
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
 </BorderPane>

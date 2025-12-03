@@ -66,13 +66,15 @@ public class App extends Application {
         // Use absolute path from the classpath root that matches your resources folder
         URL url = App.class.getResource("/com/puzzlepalace/" + fxml + ".fxml");
         System.out.println("DEBUG: FXML URL = " + url);
+
         if (url == null) {
             throw new IllegalStateException("FXML file not found: " + fxml + ".fxml");
         }
     
         FXMLLoader fxmlLoader = new FXMLLoader(url);
         return fxmlLoader.load();
-    }
+
+      }
 
     public static void main(String[] args) {
         launch();

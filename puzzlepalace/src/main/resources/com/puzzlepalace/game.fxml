@@ -7,9 +7,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.GameController">
+            fx:controller="com.example.GameController" styleClass="game-root">
+
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="12.0">
             <padding>
@@ -69,4 +71,7 @@
             </VBox>
         </VBox>
     </center>
+     <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
 </BorderPane>

@@ -3,6 +3,13 @@
     -fx-background-position: center;
 }
 
+.game-root {
+    -fx-background-image: url("images/Room.jpg");
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+}
+
 
 .dashboard-root {
     -fx-background-image: url("images/puzzleroom.jpg");

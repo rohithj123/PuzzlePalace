@@ -1,6 +1,10 @@
 .root {
-    -fx-background-image:url("images/castle.jpg");
+    -fx-background-image: url("images/castle.jpg");
     -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-color: rgba(255, 255, 255, 0.45);
+    -fx-background-blend-mode: overlay;
 }
 
 .game-root {
@@ -8,15 +12,19 @@
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
+    -fx-background-color: rgba(255, 255, 255, 0.45);
+    -fx-background-blend-mode: overlay;
 }
-
 
 .dashboard-root {
     -fx-background-image: url("images/puzzleroom.jpg");
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
+    -fx-background-color: rgba(255, 255, 255, 0.45);
+    -fx-background-blend-mode: overlay;
 }
+
 .border-pane,
 .scroll-pane {
     -fx-background-color: transparent;
@@ -62,3 +70,79 @@
     -fx-padding: 12;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 12, 0.15, 0, 4);
 }
+
+/* Make floating dashboard text white */
+.dashboard-root .label {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 4, 0.3, 0, 2);
+}
+
+/* Keep text inside list views black */
+.dashboard-root .list-cell {
+    -fx-text-fill: black;
+}
+
+/* Keep text in text fields black */
+.dashboard-root .text-field {
+    -fx-text-fill: black;
+}
+
+/* Make the black floating dashboard text pop */
+.dashboard-root .label {
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.85), 8, 0.3, 0, 2);
+}
+
+/* But keep text inside white boxes readable */
+.dashboard-root .text-field,
+.dashboard-root .list-cell,
+.dashboard-root .text-area {
+    -fx-font-weight: normal;
+    -fx-effect: none;
+}
+
+/* Make dark dashboard text a lighter grey so it pops */
+.dashboard-root .label {
+    -fx-text-fill: #f2f2f2;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 6, 0.3, 0, 2);
+}
+
+/* Keep text inside white controls readable */
+.dashboard-root .list-cell,
+.dashboard-root .text-field,
+.dashboard-root .text-area {
+    -fx-text-fill: black;
+    -fx-effect: none;
+}
+
+/* Light grey style for the two floating puzzle info lines */
+#puzzleStatusLabel {
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 6, 0.3, 0, 2);
+}
+
+#difficultyDescriptionLabel {
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 6, 0.3, 0, 2);
+}
+
+/* Game text: match dashboard pop style */
+.game-root .label {
+    -fx-text-fill: #f2f2f2;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 6, 0.3, 0, 2);
+}
+
+/* Keep textfields dark on white backgrounds */
+.game-root .text-field {
+    -fx-text-fill: black;
+    -fx-effect: none;
+}
+
+
+
+
+

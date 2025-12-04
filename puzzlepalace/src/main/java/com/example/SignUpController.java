@@ -1,13 +1,14 @@
 package com.example;
 
+import java.io.IOException;
+
 import com.model.Player;
 import com.model.PuzzlePalaceFacade;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
 
 /**
  * Handles the sign-up screen.

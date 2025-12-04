@@ -34,7 +34,7 @@
                 <Label style="-fx-font-size: 16px;" textFill="#1b1b1a" />
             <Button mnemonicParsing="false" text="Password" />
                 <PasswordField fx:id="passwordField" prefHeight="35.0" prefWidth="336.0" promptText="Create a password" />
-            <Button mnemonicParsing="false" text="Confirm Passoword" />
+            <Button mnemonicParsing="false" text="Confirm Password" />
                 <PasswordField fx:id="confirmPasswordField" prefHeight="35.0" prefWidth="336.0" promptText="Re-enter your password" />
             </VBox>
             <HBox alignment="CENTER" spacing="16.0">

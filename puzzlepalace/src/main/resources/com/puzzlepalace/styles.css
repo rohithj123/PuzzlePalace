@@ -2,6 +2,14 @@
     -fx-background-image:url("images/castle.jpg");
     -fx-background-position: center;
 }
+
+
+.dashboard-root {
+    -fx-background-image: url("images/puzzleroom.jpg");
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+}
 .border-pane,
 .scroll-pane {
     -fx-background-color: transparent;

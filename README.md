@@ -13,3 +13,5 @@ High Fidelity Live Prototype: https://rohithj123.github.io/PuzzlePalace/
 Youtube Video Prototype Walkthrough Version 1: https://youtu.be/hdd6lLdcGNo
 
 Youtube Video Prototype Walkthrough Version 2: https://youtu.be/rn_RI7boV5o
+
+Youtube Video Final GUI Video Walkthrough: https://youtu.be/inVMR1Jczp8

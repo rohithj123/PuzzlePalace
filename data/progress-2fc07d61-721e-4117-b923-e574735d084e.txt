@@ -1,0 +1,14 @@
+playerId=2fc07d61-721e-4117-b923-e574735d084e
+currentRoom=0
+timer=0
+completed=false
+hintsUsed=0
+hintsRemaining=0
+startTime=
+endTime=
+scorePoints=300
+scorePuzzlesSolved=3
+scoreHintsUsed=1
+scoreTimeTaken=18
+scoreFreeHintTokens=1
+availableHints=
